@@ -1,0 +1,23 @@
+https://stackoverflow.com/questions/56533917/how-do-i-write-huffman-encoded-characters-to-a-file
+Comment écrire des caractères codés Huffman dans un fichier ? 
+
+je me suis arrêter à la fonction dict_in_binary qui transforme le dico en binaire pour l'insérer dans la compression. 
+/home/bibou/Téléchargements/cours/algo_struct_chalençon/tp5-algo-et-struct-chalencon
+
+[[/home/bibou/Téléchargements/cours/algo_struct_chalençon/tp5-algo-et-struct-chalencon/main.cpp::439][je me suis arrêter à la fonction dict_in_binary qui transforme le dico en binaire pour l'insérer dans la compression. ]]
+
+
+Bon l'encodage et le décodage de mon dictionnaire fonctionne, il faut juste que je l'écrive dans le fichier correctement, et le lise correctement. Pour ça, va falloir bien gérer la partie array, et lui dédié une place dedans
+faut aussi que je fasse sous forme de fonction car c'est un peu dégueu là
+
+Bon j'ai essayer, mais j'ai un problème : le dico est trop grand, donc j'ai pas la place pour enregistrer la taille du dico 
+
+une solution serait de passer à un type de int plus grand, ce qui serait pas du tout un problème vu qu'on écrit tout coller, par contre c'est problématique car notre dico prend plus de place mémoire 
+une autre solution serait d'écrire la taille sur deux byte, mais ça a l'air galère, enfin ça dépend de la méthode utilisée, une méthode bourrine peut être rapide à faire, du genre le bit dit la place que prend la taille du dico en nombre de bit, et on écrit la taille en faisant des additions 
+
+
+Bon, j'ai réussi à écrire le dico correctement dans l'array, et que ça préserve le message de base
+Maintenant faut récupérer le dico dans le array sous forme de vector<int8_t>, transformer le code dans le main en fonction, et faire deux trois modif, et ça devrait le faire 
+
+
+bon maintenant tout fonctionne, sauf quand à partir d'un codage de 10 bit, ça part en vrille
