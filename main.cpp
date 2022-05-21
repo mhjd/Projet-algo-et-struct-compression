@@ -46,8 +46,7 @@ bool isIn(char char_to_search, map<char, int> &my_list) {
   return true;
 }
 
-// prend un file en paramètre, et renvoie une liste de tuples avec les
-// occurences Fonctionne !
+// prend le nom d'un fichier en paramètre, et renvoie un string avec tout le contenu du fichier
 void file_to_string(string file_name, string &my_string) {
   ifstream read_file(file_name);
 
@@ -59,6 +58,8 @@ void file_to_string(string file_name, string &my_string) {
   }
   read_file.close();
 }
+
+// transforme notre codage en format string en un map contenant les occurences de chaque caractère, et le range les caractères dans l'ordre croissant de nombre de caractères 
 vector<pair<char, int>> string_to_vector(string &my_string) {
   map<char, int> my_chars_occurences;
   cout << endl;
@@ -180,6 +181,7 @@ void free_tree(Node *my_node) {
   delete my_node;
 }
 
+// on transforme notre vecteur d'occurence en arbre
 Node *vector_pair_to_tree(vector<pair<char, int>> my_occcurences) {
   // méthode :
   // On prend une liste de noeuds, on lui ajoute tout nos noeud dans l'ordre
@@ -252,6 +254,7 @@ Node *vector_pair_to_tree(vector<pair<char, int>> my_occcurences) {
   return my_node_to_return;
 }
 
+// on transforme notre arbre en codage de binaire 
 void tree_to_binary(map<deque<bool>, char> &coding_list, deque<bool> my_coding,
                     Node *my_tree) {
 
@@ -289,6 +292,7 @@ void sorting_alphabet(vector<string> &my_list_of_strings) {
        [](const auto &x, const auto &y) { return x < y; });
 }
 
+// transforme notre string en un vecteur contenant tout les rotations possible
 int all_possible_rotation(string my_string_to_rotate,
                           vector<string> &my_list_of_strings) {
 
@@ -449,6 +453,7 @@ int8_t adding_bit_necessary(list<int> &my_list_of_bits) {
   return bit_added;
 }
 
+// écrit le dictionnaire sous format binaire dans un vecteur d'élément 8 bits, en vu de l'écrire dans le fichier compressé final
 vector<int8_t> dict_in_binary(map<deque<bool>, char> &my_coding_list) {
   vector<int8_t> my_dictionnary_in_binary;
   int8_t size_codage_in_bit;
@@ -514,6 +519,8 @@ vector<int8_t> dict_in_binary(map<deque<bool>, char> &my_coding_list) {
   return my_dictionnary_in_binary;
 }
 
+// écrit le fichier à partir du texte et du dictionnaire de traduction de char à
+// codage bianire
 void write_compressed_file(string file_name, string &original_text,
                            map<deque<bool>, char> &my_coding_list) {
 
@@ -828,6 +835,9 @@ void read_file(string file_name) {
   }
   cout << "affichage : " << my_text_recompose << endl;
 }
+
+
+
 
 int main(void) {
 
