@@ -370,7 +370,7 @@ string recontruct_original_string(string &my_rotated_string,
 // en arbre Ensuite, on verra
 
 // écrit le dictionnaire de char en codage binaire dans une liste de 0 et de 1, pour pouvoir l'écrire dans le fichier 
-void add_bits_in_list(char my_char_to_add,
+void write_dic_in_list_of_bits(char my_char_to_add,
                       map<deque<bool>, char> &my_coding_list,
                       list<int> &my_list_of_bits) {
   // cout << "lettre à chercher : " << my_char_to_add << endl;
@@ -539,7 +539,7 @@ void write_compressed_file(string file_name, string &original_text,
 
   // on écrit tout ça dans un vector int8_t pour ensuite récupérer la taille de
   // bit allouer on écrit ça dan  ma list of bits, et on pense à ajouter un
-  // argument pour add_bits_in_list pour qu'il commence à partir de la fin du
+  // argument pour write_dic_in_list_of_bits pour qu'il commence à partir de la fin du
   // array
 
   // bit nécessaire pour le codage,
@@ -548,7 +548,7 @@ void write_compressed_file(string file_name, string &original_text,
   list<int> my_list_of_bits;
   // cout << "taille de list of bits " << my_list_of_bits.size() << endl;
   for (char my_char : original_text) {
-    add_bits_in_list(my_char, my_coding_list, my_list_of_bits);
+    write_dic_in_list_of_bits(my_char, my_coding_list, my_list_of_bits);
     // cout << "taille de list of bits " << my_list_of_bits.size() << endl;
   }
   // ensuite compter le nombre de bit nécessaire pour que ça soit un multiple
