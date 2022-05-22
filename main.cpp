@@ -416,7 +416,7 @@ int8_t create_chunk_bit(list<int> &my_list_of_bits) {
 
 // dico
 // the_begenning continent l'indice à partir duquel on commence
-void list_to_array(list<int> &my_list_of_bits, int8_t *my_tab,
+void write_list_of_bits_in_array(list<int> &my_list_of_bits, int8_t *my_tab,
                    int the_beginning) {
   // i - 1 < ... car on commence à 1, donc faut compenser
   // on commencer à 1, car l'indice 0 contient  le nb de bit ajouter
@@ -605,10 +605,10 @@ void write_compressed_file(string file_name, string &original_text,
   cout << "écriture du texte en lui même..." << endl;
   cout << "the beg : " << (int)array[1] << endl;
   // exit(1);
-  list_to_array(my_list_of_bits, array, index);
+  write_list_of_bits_in_array(my_list_of_bits, array, index);
   cout << "écriture réussi ! " << endl;
   // sûrement un problème au niveau de array
-  // en l'occurence au niveau de list_to_array
+  // en l'occurence au niveau de write_list_of_bits_in_array
 
   // c'est la méthode la plus simple que j'ai trouver pour écrire un tab dans un
   // fichier
