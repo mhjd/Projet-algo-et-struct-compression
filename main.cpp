@@ -47,16 +47,17 @@ bool isIn(char char_to_search, map<char, int> &my_list) {
 }
 
 // prend le nom d'un fichier en paramètre, et renvoie un string avec tout le contenu du fichier
-void text_file_to_string(string file_name, string &my_string) {
+string text_file_to_string(string file_name) {
   ifstream read_file(file_name);
 
   char c;
 
-  // tuple<char> search;
+  string my_string;
   while (read_file.get(c)) {
     my_string.push_back(c);
   }
   read_file.close();
+  return my_string;
 }
 
 // transforme notre codage en format string en un map contenant les occurences de chaque caractère, et le range les caractères dans l'ordre croissant de nombre de caractères 
@@ -296,8 +297,10 @@ void sorting_in_alphabetical_order(vector<string> &my_list_of_strings) {
 }
 
 // transforme notre string en un vecteur contenant tout les rotations possible
-int all_possible_rotation_of_string(string my_string_to_rotate,
+void all_possible_rotation_of_string(string my_string_to_rotate,
                           vector<string> &my_list_of_strings) {
+
+  my_list_of_strings.reserve(my_string_to_rotate.size());
 
   string my_original_string = my_string_to_rotate;
   my_list_of_strings.push_back(my_string_to_rotate);
@@ -309,14 +312,6 @@ int all_possible_rotation_of_string(string my_string_to_rotate,
   }
   sorting_in_alphabetical_order(my_list_of_strings);
 
-  int i = 0;
-  for (auto s : my_list_of_strings) {
-    if (s == my_original_string) {
-      return i;
-    }
-    i += 1;
-  }
-  return i;
 }
 
 // le string à écrire dans le fichier compressé, il est plus facilement compressable avec la Transformée de Burrows-Wheeler car ça augmente le taux de lettres identiques côte à côte
@@ -844,55 +839,23 @@ void read_file(string file_name) {
   cout << "affichage : " << my_text_recompose << endl;
 }
 
+//"my_text.txt"
+void compression(string to_compress) {
+  string the_text_file = text_file_to_string(to_compress);
 
-
-
-int main(void) {
-
-  //  vector<string> my_strings;
-  //  int index_of_original_string = all_possible_rotation_of_string("textuel",
-  //  my_strings); string my_coding_from_rotation = get_the_string_to_write_in_compressed_file(my_strings);
-  //
-  //  cout << "ma chaîne codée : " << my_coding_from_rotation << endl;
-  //
-  //  vector<string> reconstruct_string;
-  //  string reconstruct =
-  //  recontruct_original_string(my_coding_from_rotation,reconstruct_string,
-  //  index_of_original_string); cout << "ma chaîne recontruite : " <<
-  //  reconstruct << endl;
-
-  // on transforme le fichier my_text.txt en vecteur
-  string the_text_file;
-  text_file_to_string("my_text.txt", the_text_file);
-  // the_text_file =
-  // "azertyuiopqsdfghaeaaajjhahezazeifeaoziuaoasoduiqpoqcdqdaacbbq,ncbqghcvhqdghc;q:!;,;;nhjqgdyquguayaireaas7894561230+$*ù$&é(-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffggggggggggggggggggggggggggggggggggggggggggggggggggghhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhkjjkeè_çà)ù%£µ%/§.?";
-  cout << "the text : " << the_text_file
-       << ", la taille : " << the_text_file.size() << endl;
-  // the_text_file = "Wikipedia";
   vector<string> my_strings;
-  int index_of_original_string =
-      all_possible_rotation_of_string(the_text_file, my_strings);
-  // cout << "affichage de tout les string : " << endl;
-  // print_string_vector(my_strings);
-  string my_coding_from_rotation = get_the_string_to_write_in_compressed_file(my_strings);
-  // cout << "my index : " << index_of_original_string << endl;
-  auto my_test = string_to_vector_of_occurrences(my_coding_from_rotation);
-  // je devrais plutôt faire : file to text, text to vector, et enregistrer le
-  // texte quelque part car il faut retranscrire le texte après
-  //
+  all_possible_rotation_of_string(the_text_file, my_strings);
 
-  // on affiche les occurences de chaque caractères
-  /*for (const auto &p : my_test) {
-    std::cout << p.first << " => " << p.second << '\n';
-    }*/
+  string string_from_rotation =
+      get_the_string_to_write_in_compressed_file(my_strings);
+
+  vector<pair<char, int>> occurences_of_each_char =
+      string_to_vector_of_occurrences(string_from_rotation);
 
   // On transforme notre vecteur d'occurence en arbre
-  auto my_tree = vector_of_occurences_to_tree(my_test);
-  // cout << "parcours en profondeur  : " << endl;
-  // parcours_profondeur(my_tree);
+  Node *my_tree = vector_of_occurences_to_tree(occurences_of_each_char);
 
-  // on transforme notre arbre d'occurence en une liste de codage pour chaque
-  // lettre
+  // on transforme notre arbre d'occurence en une liste de codage pour chaque char
   map<deque<bool>, char> my_coding_list;
   deque<bool> my_coding;
   tree_to_dict_of_binary_codage(my_coding_list, my_coding, my_tree);
@@ -900,115 +863,181 @@ int main(void) {
   // on libère la mémoire de notre arbre, il nous sert plus
   free_tree(my_tree);
 
-  // on affiche les caractères et leur codage
-  // for (auto x : my_coding_list) {
-  //   cout << "my char : " << x.second << endl;
-  //   cout << "my list of bool : " << endl;
-  //   for (auto y : x.first) {
-  //     cout << y << ", ";
-  //   }
-  //   cout << endl;
-  // }
-
-  cout << "------------" << endl << "dico normal : " << endl;
-
-  for (auto x : my_coding_list) {
-    cout << "my char : " << x.second << endl;
-    // cout << "my list of bool : " << endl;
-    // for (auto y : x.first) {
-    //   cout << y << ", ";
-    // }
-    // cout << endl;
-  }
-
-  cout << "------------" << endl << "dico en binaire : " << endl;
-
-  vector<int8_t> my_vec = dict_in_binary_form(my_coding_list);
-
-  int tour_restant_pour_taille_codage = 1; // c'est en bit char actual_char;
-  char actual_char;
-  int size_of_codage;
-  list<int8_t> codage_of_char;
-
-  map<deque<bool>, char> my_dict_to_fill;
-  for (int8_t element : my_vec) {
-
-    //    cout << "my char : " << element << endl;
-
-    if (tour_restant_pour_taille_codage ==
-        1) { // dans le cas où on est au bit du char
-      // cout << "my char : " << element << endl;
-      actual_char = (char)element;
-    } else if (tour_restant_pour_taille_codage ==
-               0) { // si on est ) la taille du codage d'un char
-      // cout << "taille : " << (int) element << endl;
-      //  j'ai mus inférieur ou égal, car si c'est égal bah un byte suffit
-      if ((int)element <= 8) { // si la taille du codage est inférieur à 1 byte
-        tour_restant_pour_taille_codage =
-            1 + 1 + 1; // un byte pour le codage, puis un pour le caractère
-                       // suivant, et un je sais plus mais ça marche pas sinon
-
-        cout << "tour restant : " << tour_restant_pour_taille_codage << endl;
-      } else { // si la taille est d'au moins la taille d'yn byte
-        // cout << "parencacahuere" << endl;
-        tour_restant_pour_taille_codage =
-            (int)element / 8; // on ajoute un tour pour chaque byte de codage
-        // ça serait pas plutôt / 8 du coup  ?
-
-        cout << "tour restant : " << tour_restant_pour_taille_codage << endl;
-        tour_restant_pour_taille_codage +=
-            3; // on ajoute un byte pour le char suivant, et les deux autres jsp
-               // mais sinon ça marche pas
-        cout << "tour restant : " << tour_restant_pour_taille_codage << endl;
-      }
-
-      size_of_codage = (int)element;
-      //  cout << "tour restant : " << tour_restant_pour_taille_codage << endl;
-    } else { // si on est au codage en lui même
-      codage_of_char.push_back(element);
-      //    cout << (int) element << endl;
-      if (tour_restant_pour_taille_codage ==
-          2) { // si on a ajouter le dernier élément de codage_of_char
-        // appel de la fonction add_to_dict
-
-        cout << "my char : " << actual_char << endl;
-        cout << "size of codage : " << size_of_codage << endl;
-        add_a_codage_to_dict(my_dict_to_fill, actual_char, size_of_codage,
-                             codage_of_char);
-      }
-    }
-    tour_restant_pour_taille_codage--;
-  }
-  cout << "noice : " << endl;
-  for (auto element : my_dict_to_fill) {
-    if (element.second == ';') {
-      cout << "my char : " << element.second << endl;
-      cout << "my list of bool : " << endl;
-      for (auto my_bit : element.first) {
-        cout << my_bit << ", ";
-      }
-      cout << endl;
-    }
-  }
-
-  // bon mon dico marche, mais faut que je puisse obtenir la traduction de
-  // codages binaires depuis les bytes Pour ce faire, j'ai besoin de transformer
-  // tout les bytes dédié au codage en liste de bit. On peut savoir ça en
-  // arrondissant la taille du codage en bit au multiple supérieur de 8 (on
-  // enregistre ça dans taille_totale), puis en divisant par 8.
-
-  // ensuite, on enlève les bit en trop à la fin, en faisant taille_totale -
-  // taille du codage et on transforme ce qui reste, une liste d'int de 0 et 1,
-  // en un deque<bool>, on enregistre ça dans un map qui associe ce codage au
-  // caractère correspondant
+  // ecrire le fichier
   write_compressed_file("my_compressed_text.bz2", the_text_file,
                         my_coding_list);
-  
+
   read_file("my_compressed_text.bz2");
-  // transcrire le message dans un fichier binaire, en f
-  // parcours en profondeur fonctionne, l'arbre est bien construit
-  // maintenant, je dois transformer mon arbre en liste de codage, réussi !
-  // passons à la transcription dans un fichier ? C'est plutôt dur ça
-  // En vrai, go nettoyer le code
+}
+
+int main(void){
+  compression("my_text.txt");
   return 0;
 }
+    // {
+
+//   //  vector<string> my_strings;
+//   //  int index_of_original_string = all_possible_rotation_of_string("textuel",
+//   //  my_strings); string my_coding_from_rotation = get_the_string_to_write_in_compressed_file(my_strings);
+//   //
+//   //  cout << "ma chaîne codée : " << my_coding_from_rotation << endl;
+//   //
+//   //  vector<string> reconstruct_string;
+//   //  string reconstruct =
+//   //  recontruct_original_string(my_coding_from_rotation,reconstruct_string,
+//   //  index_of_original_string); cout << "ma chaîne recontruite : " <<
+//   //  reconstruct << endl;
+
+//   // on transforme le fichier my_text.txt en vecteur
+//   string the_text_file;
+//   text_file_to_string("my_text.txt", the_text_file);
+//   // the_text_file =
+//   // "azertyuiopqsdfghaeaaajjhahezazeifeaoziuaoasoduiqpoqcdqdaacbbq,ncbqghcvhqdghc;q:!;,;;nhjqgdyquguayaireaas7894561230+$*ù$&é(-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffggggggggggggggggggggggggggggggggggggggggggggggggggghhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhkjjkeè_çà)ù%£µ%/§.?";
+//   cout << "the text : " << the_text_file
+//        << ", la taille : " << the_text_file.size() << endl;
+//   // the_text_file = "Wikipedia";
+//   vector<string> my_strings;
+//   int index_of_original_string =
+//       all_possible_rotation_of_string(the_text_file, my_strings);
+//   // cout << "affichage de tout les string : " << endl;
+//   // print_string_vector(my_strings);
+//   string my_coding_from_rotation = get_the_string_to_write_in_compressed_file(my_strings);
+//   // cout << "my index : " << index_of_original_string << endl;
+//   auto my_test = string_to_vector_of_occurrences(my_coding_from_rotation);
+//   // je devrais plutôt faire : file to text, text to vector, et enregistrer le
+//   // texte quelque part car il faut retranscrire le texte après
+//   //
+
+//   // on affiche les occurences de chaque caractères
+//   /*for (const auto &p : my_test) {
+//     std::cout << p.first << " => " << p.second << '\n';
+//     }*/
+
+//   // On transforme notre vecteur d'occurence en arbre
+//   auto my_tree = vector_of_occurences_to_tree(my_test);
+//   // cout << "parcours en profondeur  : " << endl;
+//   // parcours_profondeur(my_tree);
+
+//   // on transforme notre arbre d'occurence en une liste de codage pour chaque
+//   // lettre
+//   map<deque<bool>, char> my_coding_list;
+//   deque<bool> my_coding;
+//   tree_to_dict_of_binary_codage(my_coding_list, my_coding, my_tree);
+
+//   // on libère la mémoire de notre arbre, il nous sert plus
+//   free_tree(my_tree);
+
+//   // on affiche les caractères et leur codage
+//   // for (auto x : my_coding_list) {
+//   //   cout << "my char : " << x.second << endl;
+//   //   cout << "my list of bool : " << endl;
+//   //   for (auto y : x.first) {
+//   //     cout << y << ", ";
+//   //   }
+//   //   cout << endl;
+//   // }
+
+//   cout << "------------" << endl << "dico normal : " << endl;
+
+//   for (auto x : my_coding_list) {
+//     cout << "my char : " << x.second << endl;
+//     // cout << "my list of bool : " << endl;
+//     // for (auto y : x.first) {
+//     //   cout << y << ", ";
+//     // }
+//     // cout << endl;
+//   }
+
+//   cout << "------------" << endl << "dico en binaire : " << endl;
+
+//   vector<int8_t> my_vec = dict_in_binary_form(my_coding_list);
+
+//   int tour_restant_pour_taille_codage = 1; // c'est en bit char actual_char;
+//   char actual_char;
+//   int size_of_codage;
+//   list<int8_t> codage_of_char;
+
+//   map<deque<bool>, char> my_dict_to_fill;
+//   for (int8_t element : my_vec) {
+
+//     //    cout << "my char : " << element << endl;
+
+//     if (tour_restant_pour_taille_codage ==
+//         1) { // dans le cas où on est au bit du char
+//       // cout << "my char : " << element << endl;
+//       actual_char = (char)element;
+//     } else if (tour_restant_pour_taille_codage ==
+//                0) { // si on est ) la taille du codage d'un char
+//       // cout << "taille : " << (int) element << endl;
+//       //  j'ai mus inférieur ou égal, car si c'est égal bah un byte suffit
+//       if ((int)element <= 8) { // si la taille du codage est inférieur à 1 byte
+//         tour_restant_pour_taille_codage =
+//             1 + 1 + 1; // un byte pour le codage, puis un pour le caractère
+//                        // suivant, et un je sais plus mais ça marche pas sinon
+
+//         cout << "tour restant : " << tour_restant_pour_taille_codage << endl;
+//       } else { // si la taille est d'au moins la taille d'yn byte
+//         // cout << "parencacahuere" << endl;
+//         tour_restant_pour_taille_codage =
+//             (int)element / 8; // on ajoute un tour pour chaque byte de codage
+//         // ça serait pas plutôt / 8 du coup  ?
+
+//         cout << "tour restant : " << tour_restant_pour_taille_codage << endl;
+//         tour_restant_pour_taille_codage +=
+//             3; // on ajoute un byte pour le char suivant, et les deux autres jsp
+//                // mais sinon ça marche pas
+//         cout << "tour restant : " << tour_restant_pour_taille_codage << endl;
+//       }
+
+//       size_of_codage = (int)element;
+//       //  cout << "tour restant : " << tour_restant_pour_taille_codage << endl;
+//     } else { // si on est au codage en lui même
+//       codage_of_char.push_back(element);
+//       //    cout << (int) element << endl;
+//       if (tour_restant_pour_taille_codage ==
+//           2) { // si on a ajouter le dernier élément de codage_of_char
+//         // appel de la fonction add_to_dict
+
+//         cout << "my char : " << actual_char << endl;
+//         cout << "size of codage : " << size_of_codage << endl;
+//         add_a_codage_to_dict(my_dict_to_fill, actual_char, size_of_codage,
+//                              codage_of_char);
+//       }
+//     }
+//     tour_restant_pour_taille_codage--;
+//   }
+//   cout << "noice : " << endl;
+//   for (auto element : my_dict_to_fill) {
+//     if (element.second == ';') {
+//       cout << "my char : " << element.second << endl;
+//       cout << "my list of bool : " << endl;
+//       for (auto my_bit : element.first) {
+//         cout << my_bit << ", ";
+//       }
+//       cout << endl;
+//     }
+//   }
+
+//   // bon mon dico marche, mais faut que je puisse obtenir la traduction de
+//   // codages binaires depuis les bytes Pour ce faire, j'ai besoin de transformer
+//   // tout les bytes dédié au codage en liste de bit. On peut savoir ça en
+//   // arrondissant la taille du codage en bit au multiple supérieur de 8 (on
+//   // enregistre ça dans taille_totale), puis en divisant par 8.
+
+//   // ensuite, on enlève les bit en trop à la fin, en faisant taille_totale -
+//   // taille du codage et on transforme ce qui reste, une liste d'int de 0 et 1,
+//   // en un deque<bool>, on enregistre ça dans un map qui associe ce codage au
+//   // caractère correspondant
+//   write_compressed_file("my_compressed_text.bz2", the_text_file,
+//                         my_coding_list);
+  
+//   read_file("my_compressed_text.bz2");
+//   // transcrire le message dans un fichier binaire, en f
+//   // parcours en profondeur fonctionne, l'arbre est bien construit
+//   // maintenant, je dois transformer mon arbre en liste de codage, réussi !
+//   // passons à la transcription dans un fichier ? C'est plutôt dur ça
+//   // En vrai, go nettoyer le code
+//   return 0;
+// }
+
+
