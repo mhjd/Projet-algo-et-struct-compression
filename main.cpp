@@ -49,7 +49,6 @@ bool isIn(char char_to_search, map<char, int> &my_list) {
 // prend le nom d'un fichier en paramètre, et renvoie un string avec tout le contenu du fichier
 string text_file_to_string(string file_name) {
   ifstream read_file(file_name);
-
   char c;
 
   string my_string;
@@ -57,25 +56,33 @@ string text_file_to_string(string file_name) {
     my_string.push_back(c);
   }
   read_file.close();
+
   return my_string;
 }
 
-// transforme notre codage en format string en un map contenant les occurences de chaque caractère, et le range les caractères dans l'ordre croissant de nombre de caractères 
+
+
+
+// transforme notre string à écrire dans le fichier compressé  en un map contenant les occurences
+// de chaque caractère, et le range les caractères dans l'ordre croissant de
+// nombre de caractères
 vector<pair<char, int>> string_to_vector_of_occurrences(string &my_string) {
+
   map<char, int> my_chars_occurences;
-  cout << endl;
   char c;
 
-  // tuple<char> search;
+  // pour chaque caractère de notre string
   for (auto c : my_string) {
     auto search = my_chars_occurences.find(c);
+    // si le char n'est pas déjà présent dans la liste d'occurence, on l'ajoute
     if (search == my_chars_occurences.end()) {
       my_chars_occurences.emplace(std::make_pair(c, 1));
-    } else {
+    } else { // sinon on incrémente la variable d'occurence du char 
       my_chars_occurences[c]++;
     }
   }
 
+  // on copie notre map dans un vec, que l'on range dans l'ordre croissant de nombre d'occurences
   vector<pair<char, int>> vec;
   copy(my_chars_occurences.begin(), my_chars_occurences.end(),
        back_inserter<std::vector<pair<char, int>>>(vec));
@@ -103,32 +110,21 @@ void print_list(list<Node *> &my_list) {
   // cout << endl;
 }
 
-// vérifier s'il y a plus de deux éléments avant d'appeler
-// insère le node en paramètre dans la liste de nodes tout en gardant l'ordre décroissant 
+// insère le node en paramètre dans la liste de nodes tout en gardant l'ordre croissant 
 void insert_with_sorting(list<Node *> &my_nodes, Node *&my_new_node) {
 
-  // cout << "valeur du poids de my_new_node : " << my_new_node -> weight <<
-  // endl << "---->>>";
   bool insert = false;
   for (auto it = my_nodes.begin(); it != my_nodes.end(); ++it) {
-    // cout << "la valeur du poids de l'itérateur: " << ((*it) -> weight) <<
-    // endl;
+    // on insère le nouveau noeud 
     if (my_new_node->weight < (*it)->weight && !insert) {
       my_nodes.insert(it, my_new_node);
       insert = true;
-      // it = my_nodes.end();
     }
   }
   if (!insert) { // si c'est pas inséré, c'est que tout les éléments sont plus
                  // petits que lui, donc on ajoute à la fin
     my_nodes.push_back(my_new_node);
   }
-  // cout << "liste après insertion : " << endl;
-
-  // for (auto it = my_nodes.begin(); it != my_nodes.end(); ++it) {
-  //   cout << (*it)->weight << ", ";
-  // }
-  // cout << endl;
 }
 
 void parcours_profondeur(Node *my_node) {
@@ -185,57 +181,34 @@ void free_tree(Node *my_node) {
 
 // on transforme notre vecteur d'occurence en arbre
 Node *vector_of_occurences_to_tree(vector<pair<char, int>> my_occcurences) {
-  // méthode :
-  // On prend une liste de noeuds, on lui ajoute tout nos noeud dans l'ordre
-  // croissant d'occurence, on prend les deux plus petits éléments (s'il y en a
-  // au moins deux) qui sont au début, on en fait un nouveau noeud, on enlève
-  // ces deux plus petits noeuds, et on ajoute le nouveau noeud au bon
-  // emplacement de sorte à ce que ça reste dans l'ordre croissant on fait ça
-  // jusqu'à qu'il nous reste qu'un seul noeud, que l'on renvoie
 
+  // on transforme chaque char associé à son occurence en node, qu'on met dans
+  // une liste de Node
   list<Node *> my_nodes;
   for (auto my_occurence : my_occcurences) {
     my_nodes.push_back(
         new Node{std::get<0>(my_occurence), std::get<1>(my_occurence)});
   }
 
-  /*
-  cout << "tout fonctionne bien dans le test : " << endl;
-  for (auto i : my_nodes){
-  cout << "letter : " << i -> character << ", occurences : " << i -> weight
-  << endl;
-  }
-  cout << "fin du test " << endl;
-  */
 
+  // tant qu'il reste plus de deux noeud en jeux
   while (my_nodes.size() > 2) {
-    // cout << "liste avant insertion : " << endl;
-    for (auto it = my_nodes.begin(); it != my_nodes.end(); ++it) {
-      cout << (*it)->weight << ", ";
-    }
-    cout << endl;
 
+    // on prend les noeud avec les plus petites occurences (c'est ranger dans l'ordre croissant d'occurence), et on les retire de la liste de noeud
     Node *my_smallest_element = my_nodes.front();
     my_nodes.pop_front();
     Node *my_second_smallest_element = my_nodes.front();
     my_nodes.pop_front();
 
-    // cout << "my nodes before size " << my_nodes.size() << endl;
-    // print_list(my_nodes);
-    //     my_new_node = node_from_nodes(my_smallest_element,
-    //     my_second_smallest_element);
+    // on en fait un noeud, qui possède les deux plus petits noeud en noeud enfant
     Node *my_new_node = new Node{
         ' ', my_smallest_element->weight + my_second_smallest_element->weight,
         my_smallest_element, my_second_smallest_element};
-    // cout << "my inserted new node : " << my_new_node->weight << endl;
+    // on insère le nouveau noeud dans la liste de node
     insert_with_sorting(my_nodes, my_new_node);
-    // cout << "-------------" << endl;
-    if (my_nodes.size() == 2) {
-    }
-    // cout << "my nodes after size " << my_nodes.size() << endl;
-    // print_list(my_nodes);
-    //  faudrait afficher la liste de wight à chaque tour, et voir
   }
+
+  // on créer le dernier noeud
 
   Node *my_smallest_element = my_nodes.front();
   my_nodes.pop_front();
@@ -245,13 +218,6 @@ Node *vector_of_occurences_to_tree(vector<pair<char, int>> my_occcurences) {
   Node *my_node_to_return = new Node{
       ' ', my_smallest_element->weight + my_second_smallest_element->weight,
       my_smallest_element, my_second_smallest_element};
-  // cout << "my new node " << my_node_to_return->weight << endl;
-  //  parcours_profondeur(my_node_to_return);
-  // je m'arrête ici
-  /*for(auto it = my_nodes.begin(); it != my_nodes.end(); ++it){
-    cout << it -> weight << ", ";
-    }
-    cout << endl;*/
 
   return my_node_to_return;
 }
@@ -261,7 +227,7 @@ void tree_to_dict_of_binary_codage(map<deque<bool>, char> &coding_list, deque<bo
                     Node *my_tree) {
 
   if (my_tree->node_right == NULL && my_tree->node_right == NULL) {
-    // ajouter au codage
+    // ajouter au codage, car on est arrivé au bout
     coding_list.emplace(make_pair(my_coding, my_tree->character));
   }
   // à chaque appel, on dupplique le vecteur booléen, et on fait l'appel
@@ -279,16 +245,7 @@ void tree_to_dict_of_binary_codage(map<deque<bool>, char> &coding_list, deque<bo
     tree_to_dict_of_binary_codage(coding_list, my_duplicate_coding, my_tree->node_right);
   }
 
-  // on fait ça jusqu'à atteindre le bout de l'arbre, càd quand les deux noeud
-  // enfant == false quand c'est le cas, on append le vecteur de booléen +
-  // caractère (tuple vector<bool> char), dans l'argument correspondant à la
-  // liste de codage listes des arguments : vector<pair<char, vector<bool>>>
-  // &coding_list vecto<bool>& my_coding, momnçarbre
 }
-// Node* tuples_to_tree(map<char, int> my_tuples){
-//
-// }
-
 
 // range le vecteur dans l'ordre alphabetique
 void sorting_in_alphabetical_order(vector<string> &my_list_of_strings) {
@@ -304,12 +261,14 @@ void all_possible_rotation_of_string(string my_string_to_rotate,
 
   string my_original_string = my_string_to_rotate;
   my_list_of_strings.push_back(my_string_to_rotate);
+
+  // ajout de toutes les rotations
   for (int i = 0; i < (int)my_string_to_rotate.size() - 1; i++) {
     rotate(my_string_to_rotate.begin(), my_string_to_rotate.begin() + 1,
            my_string_to_rotate.end());
-    // cout << my_string_to_rotate << endl;
     my_list_of_strings.push_back(my_string_to_rotate);
   }
+
   sorting_in_alphabetical_order(my_list_of_strings);
 
 }
@@ -364,11 +323,12 @@ string recontruct_original_string(string &my_rotated_string,
 // lecture du fichier Ensuite on fait la boucle qui transforme la file de noeud
 // en arbre Ensuite, on verra
 
-// écrit le dictionnaire de char en codage binaire dans une liste de 0 et de 1, pour pouvoir l'écrire dans le fichier 
-void write_dic_in_list_of_bits(char my_char_to_add,
+// prend un char, regarde son équivalent en binaire, l'ajoute à la liste de bits 
+void add_char_in_list_of_bits(char my_char_to_add,
                       map<deque<bool>, char> &my_coding_list,
                       list<int> &my_list_of_bits) {
-  // cout << "lettre à chercher : " << my_char_to_add << endl;
+
+  // on cherche le char dans le dictionnaire, et récupérons son équivalent binaire
   deque<bool> save_list_bit;
   bool find = false;
   for (auto it = my_coding_list.begin(); it != my_coding_list.end() && !find;
@@ -378,6 +338,7 @@ void write_dic_in_list_of_bits(char my_char_to_add,
       find = true;
     }
   }
+  // on écrit en binaire le caractère
   for (bool i : save_list_bit) {
     if (i) {
       my_list_of_bits.push_back(1);
@@ -411,7 +372,10 @@ int8_t create_chunk_bit(list<int> &my_list_of_bits) {
 
 // dico
 // the_begenning continent l'indice à partir duquel on commence
-void write_list_of_bits_in_array(list<int> &my_list_of_bits, int8_t *my_tab,
+
+// prend la liste de bits contenant le fichier à écrire, et l'écrit dans l'array
+// que l'on écrira dans le fichier
+void write_list_of_bits_of_text_in_array(list<int> &my_list_of_bits, int8_t *my_tab,
                    int the_beginning) {
   // i - 1 < ... car on commence à 1, donc faut compenser
   // on commencer à 1, car l'indice 0 contient  le nb de bit ajouter
@@ -434,7 +398,6 @@ void write_list_of_bits_in_array(list<int> &my_list_of_bits, int8_t *my_tab,
 void write_dict_in_array(vector<int8_t> &my_dict, int8_t *my_array) {
   auto number_of_bytes = my_dict.size(); // +1?
   // 3 car les 3 premiers octets sont dédié à autre chose
-  cout << "number of bytes vaut : " << number_of_bytes << endl;
   for (int i = 3; (i - 3) < number_of_bytes; i++) {
     my_array[i] = my_dict[i - 3]; // i-3 car on commence à l'indice 0
   }
@@ -444,12 +407,17 @@ void write_dict_in_array(vector<int8_t> &my_dict, int8_t *my_array) {
 // renvoie le nombre de bit ajouter
 int8_t adding_bit_necessary(list<int> &my_list_of_bits) {
   int nb_bit_to_add = 0;
+  // si le nombre de bits est inférieur à 8 (très petit fichier)j
   if (my_list_of_bits.size() < 8) {
     nb_bit_to_add = 8 - my_list_of_bits.size();
-  } else if (my_list_of_bits.size() % 8 != 0) {
+  }
+  // si le nombre de bits n'est pas un multiple de 8 (donc pas uniquement des octets)
+  else if (my_list_of_bits.size() % 8 != 0) {
     nb_bit_to_add = 8 - my_list_of_bits.size() % 8;
   }
+
   int8_t bit_added = nb_bit_to_add;
+  // on ajoute les bits à ajouter
   for (; nb_bit_to_add > 0; nb_bit_to_add--) {
     my_list_of_bits.push_back(0);
   }
@@ -458,28 +426,21 @@ int8_t adding_bit_necessary(list<int> &my_list_of_bits) {
 
 // écrit le dictionnaire sous format binaire dans un vecteur d'élément 8 bits, en vu de l'écrire dans le fichier compressé final
 vector<int8_t> dict_in_binary_form(map<deque<bool>, char> &my_coding_list) {
+  // on écrit le dico sous cette forme
+  // char - taille du codage du char - codage en lui même
   vector<int8_t> my_dictionnary_in_binary;
   int8_t size_codage_in_bit;
+  // pour chaque élément du dico
   for (auto element : my_coding_list) {
 
     // on ajoute notre caractère à notre liste
     my_dictionnary_in_binary.push_back((int8_t)element.second);
-    // test:
 
-    // cout << "my char is " << (char) my_dictionnary_in_binary.back() << endl;
-    // fin test
-
-    // on récupère la taille du codage binaire, et on l'ajoute à notre liste de
-    // nombre binaire
+    // on récupère la taille du codage binaire, et on l'ajoute à notre liste de nombre binaire
     size_codage_in_bit = element.first.size();
     my_dictionnary_in_binary.push_back(size_codage_in_bit);
-    // maintenant, on créer notre liste de bit nécessaire pour mettre le codage
-    // en binaire
 
-    // test :
-    // cout << "the size of char is " << (int) my_dictionnary_in_binary.back()<<
-    // endl;
-    // fin test
+    // on créer notre liste de bit nécessaire pour mettre le codage en binaire
     list<int> my_list_of_bits;
     for (auto my_bit : element.first) {
       if (my_bit) {
@@ -488,42 +449,18 @@ vector<int8_t> dict_in_binary_form(map<deque<bool>, char> &my_coding_list) {
         my_list_of_bits.push_back(0);
       }
     }
-
-    // il faut que ça soit un multiple de 8 donc faut ajouter des 0 si c'est pas
-    // le cas
+    // ajout des bits nécessaire si c'est pas un multiple de 8 
     adding_bit_necessary(my_list_of_bits);
-    // cout << "ma liste de bit : " << endl;
-    // for (auto element : my_list_of_bits){
-    //   cout << element;
-    // }
-    // cout << endl;
-    // maintenant qu'on a notre liste de bit, il faut la mettre en format
-    // int8_t, et l'ajouter à notre dictionnaire binaire
+    // maintenant qu'on a notre liste de bit, il faut la mettre en format int8_t, et l'ajouter à notre dictionnaire binaire
     auto number_of_bytes = my_list_of_bits.size() / 8;
-    // cout << "number of bytes: "<< number_of_bytes << endl ;
-    int taille_avant = my_dictionnary_in_binary.size();
     for (int i = 0; i < number_of_bytes; i++) {
       my_dictionnary_in_binary.push_back(create_chunk_bit(my_list_of_bits));
-      // cout << "my byte : " << (int) my_dictionnary_in_binary.back() << endl;
-      // cout << "my list_of bits  taille : " << my_list_of_bits.size() << endl;
-    }
-    // cout << endl << endl;
-    int taille_apres = my_dictionnary_in_binary.size();
-
-    bool nombre_tour_bon = (taille_apres - taille_avant) == number_of_bytes;
-    if (!nombre_tour_bon) {
-      // cout << "nope, truc chelou, taille avant : " << taille_avant << ",
-      // taille après : " << taille_apres << endl;
-    } else {
-      //    cout << "no problemo" << endl;
     }
   }
-  // exit(1);
   return my_dictionnary_in_binary;
 }
 
-// écrit le fichier à partir du texte et du dictionnaire de traduction de char à
-// codage bianire
+// écrit le fichier compressé à partir du texte et du dictionnaire de traduction de char à codage binaire
 void write_compressed_file(string file_name, string &original_text,
                            map<deque<bool>, char> &my_coding_list) {
 
@@ -539,40 +476,27 @@ void write_compressed_file(string file_name, string &original_text,
 
   // bit nécessaire pour le codage,
 
-  // créer une liste de bit (list int)
-  list<int> my_list_of_bits;
-  // cout << "taille de list of bits " << my_list_of_bits.size() << endl;
+  // créer une liste de bit (list int), qui contient le texte à écrire
+  list<int> text_to_write_in_list_of_bits;
   for (char my_char : original_text) {
-    write_dic_in_list_of_bits(my_char, my_coding_list, my_list_of_bits);
-    // cout << "taille de list of bits " << my_list_of_bits.size() << endl;
+    add_char_in_list_of_bits(my_char, my_coding_list,
+                             text_to_write_in_list_of_bits);
   }
-  // ensuite compter le nombre de bit nécessaire pour que ça soit un multiple
-  // de 8. pour ce faire : 8 - nb_bit_total % 8, quand nb_bit_total % 8 != 0, si
-  // c'est = 0, alors pas besoin, si le nb de bit total est < 8 alors on fait
-  // direct 8 - nb_bit_total
+  // on ajoute les bits à ajouter, et enregistrons le nb de bits ajouter, pour l'écrire au début du fichier et enlever ces bits inutiles lors de la décompression
   int8_t bit_added = adding_bit_necessary(
-      my_list_of_bits); // on ajoutera ça au début de notre fichier
-                        // pour ne pas lire les derniers bit
+      text_to_write_in_list_of_bits);
 
-  // cout << "taille de ma liste de bits : " << my_list_of_bits.size() << endl;
-  //  (my_list_of_bits.size() / 8) -> nombre de byte nécessaire
-  //  + 1 : premier élément, celui donnant le nb de bit ajouter
-
-  // va falloir enregistrer le dict dans le fichier compressé
-  // pour ce faire, iil faut le convertir en binaire
+  // conversion du dict en binaire 
   vector<int8_t> my_dict_in_binary = dict_in_binary_form(my_coding_list);
-  auto array_size = (my_list_of_bits.size() / 8) + 1;
-  // il faut ajouter la taille du dict_in_binary_form à l'array size + 2, le +2
-  // correspond aux octets dédiés à la taille de notre dico, pour qu'on puisse
-  // lire
+
+  // taille de l'array, pour l'écrire en début de fichier, sert à la décompression 
+  auto array_size = (text_to_write_in_list_of_bits.size() / 8) + 1;
+  //  le +2 correspond aux octets dédiés à l'écriture taille de notre dico
   array_size += my_dict_in_binary.size() + 2;
-  // totale qu'il prend, qu'on met en second argument
 
-  // cout << "array size vaut  :" << array_size << endl;
+  int8_t array[array_size]; // l'array qu'on va écrire dans le fichier
 
-  int8_t array[array_size];
-
-  array[0] = bit_added; // le nombre de bit ajouter à la fin
+  array[0] = bit_added; // le nombre de bit ajouter à la fin du texte
   // on enregistre la taille sur deux bit: 128 * array[1] + array[2]
   if (my_dict_in_binary.size() < 128) {
     array[1] = 0;
@@ -581,15 +505,8 @@ void write_compressed_file(string file_name, string &original_text,
     array[1] = my_dict_in_binary.size() / 128;
     array[2] = my_dict_in_binary.size() % 128;
   }
-  // array[1] = my_dict_in_binary.size(); // on enregistre la taille de notre
-  // dico, pour pouvoir le récupérer ensuite
-  cout << "taille du dico : " << (int)my_dict_in_binary.size() << endl;
-  cout << "taille du dico : " << (int)array[1] * 128 + (int)array[2] << endl;
-  // cout << "taille du dico : " << (int) array[1] << endl;
 
-  cout << "écriture du dictionnaire... " << endl;
   write_dict_in_array(my_dict_in_binary, array);
-  cout << "écriture réussi ! " << endl;
 
   int index =
       3 + array[1] * 128 +
@@ -597,13 +514,7 @@ void write_compressed_file(string file_name, string &original_text,
   // l'indice est de 3, car on commence à écrire le dico partir de 3, + la
   // taille du dico car on veut écrire après le dico
 
-  cout << "écriture du texte en lui même..." << endl;
-  cout << "the beg : " << (int)array[1] << endl;
-  // exit(1);
-  write_list_of_bits_in_array(my_list_of_bits, array, index);
-  cout << "écriture réussi ! " << endl;
-  // sûrement un problème au niveau de array
-  // en l'occurence au niveau de write_list_of_bits_in_array
+  write_list_of_bits_of_text_in_array(text_to_write_in_list_of_bits, array, index);
 
   // c'est la méthode la plus simple que j'ai trouver pour écrire un tab dans un
   // fichier
@@ -611,20 +522,6 @@ void write_compressed_file(string file_name, string &original_text,
   pFile = fopen(file_name.c_str(), "wb");
   fwrite(array, 1, array_size, pFile);
   fclose(pFile);
-  // cout << "écriture :  " << endl;
-  for (int i = 0; i < array_size; i++) {
-    // tab_poubelle[i] = array[i];
-    // cout << "avant : " << (int) array[i] << endl;
-  }
-
-  // for (int i : my_list_of_bits) {
-  //   cout << i;
-  // }
-  // cout << endl;
-
-  // le premier byte est = au nb de bit à 0 en plus à la fin ? ou alors osef car
-  // on a une détermination automatique ? Vas y osef pour l'instant nan ? ou
-  // pas, car 000 peut être = à un truc préexistant dans notre liste de codage
 }
 
 // maintenant qu'on a notre read_file, on le transforme en liste de bit, on
@@ -635,36 +532,31 @@ void write_compressed_file(string file_name, string &original_text,
 void chunk_to_list_bit(list<int> &list_of_bits, int8_t chunk_of_bits) {
 
   int bit;
-
-  // cout << "mon byte : " <<  (int) chunk_of_bits << endl;
   for (int n = 0; n < 8; n++) {
     bit = (chunk_of_bits >> (8 - 1 - n)) & 1;
-    //    cout << "mon bit : " <<  bit << endl;
     list_of_bits.push_back(bit);
   }
 }
 
+// cherche le char dans le dictionnaire
 char find_char(map<deque<bool>, char> &my_coding_list,
-               list<int> &list_of_bits) {
+               list<int> &list_of_bits_of_text) {
   bool added = false;
-  // liste de bit d'un codage d'un caractère, on lui met des bit de notre liste
-  // de bit jusqu'à avoir trouvé un codage de caractère
-  deque<bool> list_of_bit_of_coding;
+  deque<bool> list_of_bit_of_coding; // on lui met des bit de notre list de bit jusqu'à avoir trouvé un codage de caractère
   while (1) {
-    // on ajoute un élément à notre codage
-    if (list_of_bits.front() == 1) {
+    // on ajoute un bit à notre potentiel codage
+    if (list_of_bits_of_text.front() == 1) {
       list_of_bit_of_coding.push_back(true);
     } else {
       list_of_bit_of_coding.push_back(false);
     }
-    // cout << "ajout de " << list_of_bits.front() << endl;
-    //  on la retire de notre liste de bit tout coller
-    list_of_bits.pop_front();
+    // on le retire de la liste de bit
+    list_of_bits_of_text.pop_front();
 
     // on essaye de trouvé si notre codage existe
+    // je sais plus pourquoi j'ai utiliser ça et pas find
     if (my_coding_list.count(list_of_bit_of_coding) >
-        0) { // on compte le nombre de clé qui valent list_of_bit_of_coding
-      // cout << "lettre : " << my_coding_list[list_of_bit_of_coding] << endl;
+        0) { 
       return my_coding_list[list_of_bit_of_coding];
     }
   }
@@ -708,32 +600,31 @@ void add_a_codage_to_dict(map<deque<bool>, char> &my_dict_to_fill, char my_char,
   }
   my_dict_to_fill[my_codage_in_bool] = my_char;
 }
+
+
+// transforme un dictionnaire en binaire, en un vrai dictionnaire
 void dict_in_binary_to_real_dict(vector<int8_t> &my_dict_in_binary,
                                  map<deque<bool>, char> &my_dict) {
-
-  int lap_remaining_before_coding_size = 1;
+  int lap_remaining_before_coding_size = 1; // tour restant avant la taille du codage
   char actual_char;
   int size_of_codage;
   list<int8_t> codage_of_char;
 
-  cout << "seg ... " << endl;
-
   int my_index = 0;
+  // pour chaque bit de mon dico en binaire
   for (int8_t element : my_dict_in_binary) {
 
-    if (lap_remaining_before_coding_size == 1) { // le bit est au char
-
-      cout << "my char " << element << endl;
+    if (lap_remaining_before_coding_size == 1) { // le bit est au char, on enregistre le char
       actual_char = (char)element;
     } else if (lap_remaining_before_coding_size ==
-               0) {            // si on est à la taille du codage d'un char
+               0) {            // on est à la taille du codage d'un char
       if ((int)element <= 8) { // si la taille du codage est inférieur à 1 byte
+        // il reste 3 bits avant le prochain codage: 
         lap_remaining_before_coding_size =
-            1 + 1 + 1; // un byte pour le codage, puis un pour le char suivannt,
-                       // et un je sais plus mais ça marche pas sinon
-      } else {         // si la taille >= taille d'un byte
+            1 + 1 + 1; 
+      } else {   // si la taille >= taille d'un byte
         lap_remaining_before_coding_size =
-            (int)element / 8; // on ajotue un tour pour chaque byte de codage
+            (int)element / 8; // on ajotue un tour restant pour chaque byte de codage
         lap_remaining_before_coding_size += 3;
       }
       size_of_codage = (int)element;
@@ -747,94 +638,58 @@ void dict_in_binary_to_real_dict(vector<int8_t> &my_dict_in_binary,
                              codage_of_char);
       }
     }
-    lap_remaining_before_coding_size--;
+
+    lap_remaining_before_coding_size--;// on décrémente le nombre de tour restant
     my_index++;
   }
-  cout << "fault ! " << endl;
 }
 
 void read_file(string file_name) {
   std::ifstream input(file_name, std::ios::binary);
+  // on récupère le contenu du fichier compressé 
   std::vector<int8_t> buffer(std::istreambuf_iterator<char>(input), {});
 
-  // on affiche la coding list pour voir
-
-  // for (auto element : my_coding_list){
-  //   cout << "my char : " <<  element.second << endl;
-  // }
-
-  // cout << "testage d'égalité " << endl;
-  for (int i = 0; i < buffer.size(); i++) {
-    // cout << "is equal : " << (buffer[i] == my_array_writed[i]) << endl;
-  }
-
-  // cout << "lecture : " << endl;
-  // for (auto element : buffer){
-  //   cout << element << endl;
-  // }
-  int bit_added = buffer[0]; // bit ajouter à la fin, qu'on devra enlever à
-                             // notre liste de bit
-
-  list<int> list_of_bits;
-  // buffer[1], comme ça on commence à lire à partir d'après le dico
-  // nice
+  // la taille du dico, comme ça on sait où il se commence et fini 
   int taille_dico = buffer[1] * 128 + buffer[2];
 
+  // on récupère notre dictionnaire en format binaire
   vector<int8_t> my_dict_in_binary;
   my_dict_in_binary.reserve(taille_dico);
-  // + 3 car on compte par les premiers bits, dédié à des autres choses
-  for (int i = 3; i < taille_dico + 3; i++) {
+  for (int i = 3; i < taille_dico + 3; i++) { // + 3 car on compte par les premiers bits, dédié à des autres choses
     my_dict_in_binary.push_back(buffer[i]);
   }
 
+  // on converti notre dico binaire en dico réel, sous forme de map
   int my_dict_in_binary_index = 0;
-
-  // vector<int8_t> my_dict_in_binary = dict_in_binary(my_coding_list);
-
   map<deque<bool>, char> my_dict;
-
   dict_in_binary_to_real_dict(my_dict_in_binary, my_dict);
 
-  int debut = taille_dico + 3; // les trois premiers bits dédié à des choses
-  cout << "début de la suite : " << debut << endl;
-  // exit(1);
-  int taille_totale = (buffer.size() - debut) * 8;
-  cout << "taille totale : " << taille_totale << endl;
 
+  // on récupère l'index du début de l'écriture du texte
+  int debut = taille_dico + 3; // les trois premiers bits dédié à des choses
+  int taille_totale = (buffer.size() - debut) * 8;
+
+  // on récupère le texte sous forme binaire en liste de bits
+  list<int> list_of_bits_of_text;
   for (int i = debut; i < buffer.size(); i++) {
-    // cout << " i - debut : " << i-debut  << endl;
-    // cout << "taille du buffer : " << buffer.size() << endl;
-    chunk_to_list_bit(list_of_bits, buffer[i]);
+    chunk_to_list_bit(list_of_bits_of_text, buffer[i]);
   }
-  cout << "taille totale est de   : " << list_of_bits.size() << endl;
-  // cout << "seg fault ? :  " << list_of_bits.size() << endl;
-  // cout << "number of bit added : " << bit_added << endl;
+
+  int bit_added = buffer[0]; // bit ajouter à la fin, qu'on devra enlever à
+                             // notre liste de bit
+
+  // on enlève les bits ajouter à la fin
   for (; bit_added > 0; bit_added--) {
-    list_of_bits.pop_back();
+    list_of_bits_of_text.pop_back();
   }
 
   string my_text_recompose;
-  // c'est tout a fait normal que la taille de la liste de bits soit supérieur à
-  // la taille de la string car un caractère peut faire plusieurs bits, en
-  // l'occurence ici, a et b font deux bits, donc ça fait 18 au lieu de 16
-  // maintenant, il est où le problème
-
-  // kutta l'état entre ici et là bas devrait être le même, or c'est pas le
-  // cas
-  // cout << "printage de bits" << endl;
-  // for (auto i : list_of_bits){
-  //   cout << i << endl;
-  // }
-
-  cout << "seg fault ? :  " << list_of_bits.size() << endl;
   char my_char_to_add;
-  while (list_of_bits.size() > 0) {
-    my_char_to_add = find_char(my_dict, list_of_bits);
-    // cout << "sef fault char : "<< my_char_to_add << ", taille bits : " <<
-    //  list_of_bits.size() << endl;
+  while (list_of_bits_of_text.size() > 0) {
+    // retirer un caractère
+    my_char_to_add = find_char(my_dict, list_of_bits_of_text);
+    // l'ajouter à notre texte
     my_text_recompose += my_char_to_add;
-    // cout << my_text_recompose << endl;
-    // cout << "taille list de bit restant : " << list_of_bits.size() << endl;
   }
   cout << "affichage : " << my_text_recompose << endl;
 }
