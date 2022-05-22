@@ -47,7 +47,7 @@ bool isIn(char char_to_search, map<char, int> &my_list) {
 }
 
 // prend le nom d'un fichier en paramètre, et renvoie un string avec tout le contenu du fichier
-void file_to_string(string file_name, string &my_string) {
+void text_file_to_string(string file_name, string &my_string) {
   ifstream read_file(file_name);
 
   char c;
@@ -60,7 +60,7 @@ void file_to_string(string file_name, string &my_string) {
 }
 
 // transforme notre codage en format string en un map contenant les occurences de chaque caractère, et le range les caractères dans l'ordre croissant de nombre de caractères 
-vector<pair<char, int>> string_to_vector(string &my_string) {
+vector<pair<char, int>> string_to_vector_of_occurrences(string &my_string) {
   map<char, int> my_chars_occurences;
   cout << endl;
   char c;
@@ -103,6 +103,7 @@ void print_list(list<Node *> &my_list) {
 }
 
 // vérifier s'il y a plus de deux éléments avant d'appeler
+// insère le node en paramètre dans la liste de nodes tout en gardant l'ordre décroissant 
 void insert_with_sorting(list<Node *> &my_nodes, Node *&my_new_node) {
 
   // cout << "valeur du poids de my_new_node : " << my_new_node -> weight <<
@@ -182,7 +183,7 @@ void free_tree(Node *my_node) {
 }
 
 // on transforme notre vecteur d'occurence en arbre
-Node *vector_pair_to_tree(vector<pair<char, int>> my_occcurences) {
+Node *vector_of_occurences_to_tree(vector<pair<char, int>> my_occcurences) {
   // méthode :
   // On prend une liste de noeuds, on lui ajoute tout nos noeud dans l'ordre
   // croissant d'occurence, on prend les deux plus petits éléments (s'il y en a
@@ -255,7 +256,7 @@ Node *vector_pair_to_tree(vector<pair<char, int>> my_occcurences) {
 }
 
 // on transforme notre arbre en codage de binaire 
-void tree_to_binary(map<deque<bool>, char> &coding_list, deque<bool> my_coding,
+void tree_to_dict_of_binary_codage(map<deque<bool>, char> &coding_list, deque<bool> my_coding,
                     Node *my_tree) {
 
   if (my_tree->node_right == NULL && my_tree->node_right == NULL) {
@@ -269,12 +270,12 @@ void tree_to_binary(map<deque<bool>, char> &coding_list, deque<bool> my_coding,
   // - y en a un on lui appendera false (donc 0), + appel récursif sur la gauche
   my_coding.push_back(false);
   if (my_tree->node_left != NULL) {
-    tree_to_binary(coding_list, my_coding, my_tree->node_left);
+    tree_to_dict_of_binary_codage(coding_list, my_coding, my_tree->node_left);
   }
   // - un on lui appendera true(donc 1), + appel récursif sur la droite
   my_duplicate_coding.push_back(true);
   if (my_tree->node_right != NULL) {
-    tree_to_binary(coding_list, my_duplicate_coding, my_tree->node_right);
+    tree_to_dict_of_binary_codage(coding_list, my_duplicate_coding, my_tree->node_right);
   }
 
   // on fait ça jusqu'à atteindre le bout de l'arbre, càd quand les deux noeud
@@ -287,13 +288,15 @@ void tree_to_binary(map<deque<bool>, char> &coding_list, deque<bool> my_coding,
 //
 // }
 
-void sorting_alphabet(vector<string> &my_list_of_strings) {
+
+// range le vecteur dans l'ordre alphabetique
+void sorting_in_alphabetical_order(vector<string> &my_list_of_strings) {
   sort(my_list_of_strings.begin(), my_list_of_strings.end(),
        [](const auto &x, const auto &y) { return x < y; });
 }
 
 // transforme notre string en un vecteur contenant tout les rotations possible
-int all_possible_rotation(string my_string_to_rotate,
+int all_possible_rotation_of_string(string my_string_to_rotate,
                           vector<string> &my_list_of_strings) {
 
   string my_original_string = my_string_to_rotate;
@@ -304,7 +307,7 @@ int all_possible_rotation(string my_string_to_rotate,
     // cout << my_string_to_rotate << endl;
     my_list_of_strings.push_back(my_string_to_rotate);
   }
-  sorting_alphabet(my_list_of_strings);
+  sorting_in_alphabetical_order(my_list_of_strings);
 
   int i = 0;
   for (auto s : my_list_of_strings) {
@@ -316,7 +319,8 @@ int all_possible_rotation(string my_string_to_rotate,
   return i;
 }
 
-string coding_text(vector<string> &my_list_of_string_rotated) {
+// le string à écrire dans le fichier compressé, il est plus facilement compressable avec la Transformée de Burrows-Wheeler car ça augmente le taux de lettres identiques côte à côte
+string get_the_string_to_write_in_compressed_file(vector<string> &my_list_of_string_rotated) {
   string the_return;
   for (auto i : my_list_of_string_rotated) {
     the_return.push_back(i.back());
@@ -339,7 +343,7 @@ string recontruct_original_string(string &my_rotated_string,
     string tmp(1, my_char);
     reconstruct_string.push_back(tmp);
   }
-  sorting_alphabet(reconstruct_string);
+  sorting_in_alphabetical_order(reconstruct_string);
 
   int i;
   for (int x = 0; x < string_length - 1; x++) {
@@ -349,7 +353,7 @@ string recontruct_original_string(string &my_rotated_string,
       reconstruct_string[i].insert(0, tmp);
       i += 1;
     }
-    sorting_alphabet(reconstruct_string);
+    sorting_in_alphabetical_order(reconstruct_string);
     cout << "_____________" << endl;
     for (auto element : reconstruct_string) {
       cout << "[" << element << "]" << endl;
@@ -365,6 +369,7 @@ string recontruct_original_string(string &my_rotated_string,
 // lecture du fichier Ensuite on fait la boucle qui transforme la file de noeud
 // en arbre Ensuite, on verra
 
+// écrit le dictionnaire de char en codage binaire dans une liste de 0 et de 1, pour pouvoir l'écrire dans le fichier 
 void add_bits_in_list(char my_char_to_add,
                       map<deque<bool>, char> &my_coding_list,
                       list<int> &my_list_of_bits) {
@@ -387,6 +392,7 @@ void add_bits_in_list(char my_char_to_add,
   }
 }
 
+// prend une liste d'int de 0 et des 1, lui retire 8 élément pour en faire un octet, et renvoie cet octet 
 int8_t create_chunk_bit(list<int> &my_list_of_bits) {
   int8_t my_byte;
   for (int i = 0; i < 8; i++) {
@@ -429,6 +435,7 @@ void list_to_array(list<int> &my_list_of_bits, int8_t *my_tab,
   // my_tab[i] = create_chunk_bit(my_list_of_bits);
 }
 
+// écrit le vector contenant notre dictionnaire sous forme de int de 8 bits, dans notre array qui contiendra tout le contenu du fichier à écrire
 void write_dict_in_array(vector<int8_t> &my_dict, int8_t *my_array) {
   auto number_of_bytes = my_dict.size(); // +1?
   // 3 car les 3 premiers octets sont dédié à autre chose
@@ -437,6 +444,7 @@ void write_dict_in_array(vector<int8_t> &my_dict, int8_t *my_array) {
     my_array[i] = my_dict[i - 3]; // i-3 car on commence à l'indice 0
   }
 }
+
 // permet d'ajouter les bit nécessaire pour avoir un multiple de 8
 // renvoie le nombre de bit ajouter
 int8_t adding_bit_necessary(list<int> &my_list_of_bits) {
@@ -454,7 +462,7 @@ int8_t adding_bit_necessary(list<int> &my_list_of_bits) {
 }
 
 // écrit le dictionnaire sous format binaire dans un vecteur d'élément 8 bits, en vu de l'écrire dans le fichier compressé final
-vector<int8_t> dict_in_binary(map<deque<bool>, char> &my_coding_list) {
+vector<int8_t> dict_in_binary_form(map<deque<bool>, char> &my_coding_list) {
   vector<int8_t> my_dictionnary_in_binary;
   int8_t size_codage_in_bit;
   for (auto element : my_coding_list) {
@@ -557,9 +565,9 @@ void write_compressed_file(string file_name, string &original_text,
 
   // va falloir enregistrer le dict dans le fichier compressé
   // pour ce faire, iil faut le convertir en binaire
-  vector<int8_t> my_dict_in_binary = dict_in_binary(my_coding_list);
+  vector<int8_t> my_dict_in_binary = dict_in_binary_form(my_coding_list);
   auto array_size = (my_list_of_bits.size() / 8) + 1;
-  // il faut ajouter la taille du dict_in_binary à l'array size + 2, le +2
+  // il faut ajouter la taille du dict_in_binary_form à l'array size + 2, le +2
   // correspond aux octets dédiés à la taille de notre dico, pour qu'on puisse
   // lire
   array_size += my_dict_in_binary.size() + 2;
@@ -842,8 +850,8 @@ void read_file(string file_name) {
 int main(void) {
 
   //  vector<string> my_strings;
-  //  int index_of_original_string = all_possible_rotation("textuel",
-  //  my_strings); string my_coding_from_rotation = coding_text(my_strings);
+  //  int index_of_original_string = all_possible_rotation_of_string("textuel",
+  //  my_strings); string my_coding_from_rotation = get_the_string_to_write_in_compressed_file(my_strings);
   //
   //  cout << "ma chaîne codée : " << my_coding_from_rotation << endl;
   //
@@ -855,7 +863,7 @@ int main(void) {
 
   // on transforme le fichier my_text.txt en vecteur
   string the_text_file;
-  file_to_string("my_text.txt", the_text_file);
+  text_file_to_string("my_text.txt", the_text_file);
   // the_text_file =
   // "azertyuiopqsdfghaeaaajjhahezazeifeaoziuaoasoduiqpoqcdqdaacbbq,ncbqghcvhqdghc;q:!;,;;nhjqgdyquguayaireaas7894561230+$*ù$&é(-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffggggggggggggggggggggggggggggggggggggggggggggggggggghhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhkjjkeè_çà)ù%£µ%/§.?";
   cout << "the text : " << the_text_file
@@ -863,12 +871,12 @@ int main(void) {
   // the_text_file = "Wikipedia";
   vector<string> my_strings;
   int index_of_original_string =
-      all_possible_rotation(the_text_file, my_strings);
+      all_possible_rotation_of_string(the_text_file, my_strings);
   // cout << "affichage de tout les string : " << endl;
   // print_string_vector(my_strings);
-  string my_coding_from_rotation = coding_text(my_strings);
+  string my_coding_from_rotation = get_the_string_to_write_in_compressed_file(my_strings);
   // cout << "my index : " << index_of_original_string << endl;
-  auto my_test = string_to_vector(my_coding_from_rotation);
+  auto my_test = string_to_vector_of_occurrences(my_coding_from_rotation);
   // je devrais plutôt faire : file to text, text to vector, et enregistrer le
   // texte quelque part car il faut retranscrire le texte après
   //
@@ -879,7 +887,7 @@ int main(void) {
     }*/
 
   // On transforme notre vecteur d'occurence en arbre
-  auto my_tree = vector_pair_to_tree(my_test);
+  auto my_tree = vector_of_occurences_to_tree(my_test);
   // cout << "parcours en profondeur  : " << endl;
   // parcours_profondeur(my_tree);
 
@@ -887,7 +895,7 @@ int main(void) {
   // lettre
   map<deque<bool>, char> my_coding_list;
   deque<bool> my_coding;
-  tree_to_binary(my_coding_list, my_coding, my_tree);
+  tree_to_dict_of_binary_codage(my_coding_list, my_coding, my_tree);
 
   // on libère la mémoire de notre arbre, il nous sert plus
   free_tree(my_tree);
@@ -915,7 +923,7 @@ int main(void) {
 
   cout << "------------" << endl << "dico en binaire : " << endl;
 
-  vector<int8_t> my_vec = dict_in_binary(my_coding_list);
+  vector<int8_t> my_vec = dict_in_binary_form(my_coding_list);
 
   int tour_restant_pour_taille_codage = 1; // c'est en bit char actual_char;
   char actual_char;
@@ -995,7 +1003,7 @@ int main(void) {
   // caractère correspondant
   write_compressed_file("my_compressed_text.bz2", the_text_file,
                         my_coding_list);
-
+  
   read_file("my_compressed_text.bz2");
   // transcrire le message dans un fichier binaire, en f
   // parcours en profondeur fonctionne, l'arbre est bien construit
