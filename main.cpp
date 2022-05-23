@@ -103,12 +103,6 @@ Node *node_from_nodes(Node *my_first_node, Node *my_second_node) {
                   my_first_node, my_second_node};
 }
 
-void print_list(list<Node *> &my_list) {
-  // for(auto it = my_list.begin(); it != my_list.end(); ++it){
-  //   cout << (*it) -> weight << ", ";
-  // }
-  // cout << endl;
-}
 
 // insère le node en paramètre dans la liste de nodes tout en gardant l'ordre
 // croissant
@@ -128,43 +122,6 @@ void insert_with_sorting(list<Node *> &my_nodes, Node *&my_new_node) {
   }
 }
 
-void parcours_profondeur(Node *my_node) {
-  deque<Node *> ma_file;
-  ma_file.push_back(my_node);
-  Node *head;
-  deque<string> droite_gauche;
-  droite_gauche.push_back("tete");
-  while (!(ma_file.empty())) {
-    head = ma_file.front();
-    ma_file.pop_front();
-    if (head != NULL) {
-      cout << head->weight << droite_gauche.front() << head->character << endl;
-      droite_gauche.pop_front();
-      ma_file.push_back(head->node_right); // right= droite, on monte, donc 1
-      droite_gauche.push_back("droite");
-      ma_file.push_back(head->node_left); // left = gauche, on descend, donc 0
-      droite_gauche.push_back("gauche");
-    }
-  }
-  // while(!(ma_file.empty())){
-  //   head = ma_file.front();
-  //   ma_file.pop_front();
-  //   if(head != NULL){
-  //     if(head -> character == ' ') {
-
-  //       ma_file.push_back(head -> node_right);// right= droite, on monte,
-  //       ma_file.push_back(head -> node_left); // left = gauche, on
-  //       //     descend, donc 0
-  //     }
-  //   } else {
-  //     cout << "mon caractère : " << head -> character << endl;
-  //     ma_file.push_back(head->node_right); // right= droite, on monte,
-  //     ma_file.push_back(head->node_left);  // left = gauche, on
-  //   }
-  // }
-  cout << endl;
-  cout << "fin du parcours en profondeur" << endl;
-}
 
 void free_tree(Node *my_node) {
   if (my_node == NULL) {
@@ -199,7 +156,6 @@ Node *create_node_from_two_smallest(list<Node *> &my_nodes) {
 
 // on transforme notre vecteur d'occurence en arbre
 Node *vector_of_occurences_to_tree(vector<pair<char, int>> my_occcurences) {
-
   // on transforme chaque char associé à son occurence en node, qu'on met dans
   // une liste de Node
   list<Node *> my_nodes;
@@ -207,21 +163,16 @@ Node *vector_of_occurences_to_tree(vector<pair<char, int>> my_occcurences) {
     my_nodes.push_back(
         new Node{std::get<0>(my_occurence), std::get<1>(my_occurence)});
   }
-
   // tant qu'il reste plus de deux noeud en jeux
   while (my_nodes.size() > 2) {
-
     Node *my_new_node = create_node_from_two_smallest(my_nodes);
-
     // on insère le nouveau noeud dans la liste de node
     insert_with_sorting(my_nodes, my_new_node);
   }
 
-  // on créer le dernier noeud
-
-  Node *my_node_to_return = create_node_from_two_smallest(my_nodes);
-
-  return my_node_to_return;
+  // on renvoie le dernier noeud, la tête de notre arbre
+  return create_node_from_two_smallest(my_nodes);
+  ;
 }
 
 // on transforme notre arbre en codage de binaire
@@ -249,14 +200,115 @@ void tree_to_dict_of_binary_codage(map<deque<bool>, char> &coding_list,
   }
 }
 
+bool vector_char_alphabetic_comparison(vector<char> x, vector<char> y) {
+
+  //[](auto &x, auto &y) { vector_char_alphabetic_comparison(x, y); });
+
+    auto x_it = x.begin();
+    auto x_end = x.end();
+
+    auto y_it = y.begin();
+    auto y_end = y.end();
+    for (; x_it != x_end; x_it++, y_it++) {
+      if (*x_it < *y_it) {
+        return true;
+      } else if (*x_it > *y_it) {
+        return false;
+      }
+    }
+    return false;
+}
+
 // range le vecteur dans l'ordre alphabetique
 void sorting_in_alphabetical_order(vector<string> &my_list_of_strings) {
   sort(my_list_of_strings.begin(), my_list_of_strings.end(),
        [](const auto &x, const auto &y) { return x < y; });
 }
 
-// transforme notre string en un vecteur contenant tout les rotations possible
-void all_possible_rotation_of_string(string my_string_to_rotate,
+void sorting_in_alphabetical_order_deque(deque<string> &my_list_of_strings) {
+  sort(my_list_of_strings.begin(), my_list_of_strings.end(),
+       [](const auto &x, const auto &y) { return x < y; });
+}
+
+// bool compare_two_string_from_end(string& a, string& b) {
+//   auto a_it = a.begin();
+//   auto b_it = b.begin();
+
+//   auto a_end = a.end();
+//   auto b_end = b.end();
+
+
+// }
+
+bool compare(const std::string &first, const std::string &second) {
+  int i = first.length() -1;
+
+  // auto copy_first = first;
+  // auto copy_second = second;
+  // reverse(copy_first.begin(), copy_first.end());
+  // reverse(copy_second.begin(), copy_second.end());
+
+  // return copy_first < copy_second;
+  // cout << "taille : " << first.length() << endl;
+  // cout << "first[i] : " << first[i] << endl;
+  string save_first;
+  string save_second;
+  while (i >= 0) {
+    save_first.push_back(first[i]);
+    save_second.push_back(second[i]);
+
+    // cout <<"i : " <<  i << endl;
+    if (save_first < save_second) {
+      // cout << "seg par ci " << endl;
+
+      return true;
+    } else if (save_first > save_second) {
+      // cout << "seg par là " << endl;
+      return false;
+    }
+
+    --i;
+   }
+   return false;
+}
+
+void sorting_in_alphabetical_order_from_end_v2(
+                                               
+    vector<string> &my_list_of_strings) {
+  // cout << "taille first : "
+  //      << my_list_of_strings[0].size() << endl;
+  sort(my_list_of_strings.begin(), my_list_of_strings.end(),
+                  compare);
+}
+
+void sorting_in_alphabetical_order_from_end(vector<string> &my_list_of_strings) {
+  sort(my_list_of_strings.begin(), my_list_of_strings.end(),
+       [](const auto &x,  const auto &y) {
+         int i = 0;
+         auto x_it = x.end() - 1;
+         auto y_it = y.end() - 1;
+        
+         while (*(x_it) == *(y_it)) {
+           x_it--;
+           y_it--;
+         }
+         if (*(x_it) > *(y_it)){
+           return true;
+         } else {
+           return false;
+         }
+
+         // reverse(x.begin(), x.end());
+         // reverse(y.begin(), y.end());
+         // auto result = x < y;
+         // reverse(x.begin(), x.end());
+         // reverse(y.begin(), y.end());
+         // return result;
+       });
+}
+
+// transforme notre string en un vecteur contenant tout les rotations possible, et retourne l'index de la string originale
+int all_possible_rotation_of_string(string my_string_to_rotate,
                                      vector<string> &my_list_of_strings) {
 
   my_list_of_strings.reserve(my_string_to_rotate.size());
@@ -272,6 +324,14 @@ void all_possible_rotation_of_string(string my_string_to_rotate,
   }
 
   sorting_in_alphabetical_order(my_list_of_strings);
+  int i = 0;
+  for (auto s : my_list_of_strings) {
+    if (s == my_original_string) {
+      return i;
+    }
+    i += 1;
+  }
+  return i;
 }
 
 // le string à écrire dans le fichier compressé, il est plus facilement
@@ -285,39 +345,104 @@ string get_the_string_to_write_in_compressed_file(
   }
   return the_return;
 }
-void print_string_vector(vector<string> &a) {
-  for (auto i : a) {
-    cout << i << endl;
-  }
+
+void sorting_char_vector_in_alphabetical_order(vector<deque<char>> &my_list_of_strings) {
+  sort(my_list_of_strings.begin(), my_list_of_strings.end(),
+       [](const auto &x, const auto &y) { 
+      auto x_it = x.begin();
+      auto x_end = x.end();
+      
+      auto y_it = y.begin();
+      auto y_end = y.end();
+      for (; x_it != x_end; x_it++, y_it++) {
+        if ((*x_it) > (*y_it)) {
+          return true;
+        }
+      }
+      return false;
+       });
 }
 
+// reconstruit la string originale 
 string recontruct_original_string(string &my_rotated_string,
-                                  vector<string> &reconstruct_string,
+                                 vector<string> &reconstruct_string,
                                   int index_of_original_string) {
+  const clock_t begin_time = clock();
+
   int string_length = my_rotated_string.size();
 
-  for (char my_char : my_rotated_string) {
-    string tmp(1, my_char);
-    reconstruct_string.push_back(tmp);
-  }
-  sorting_in_alphabetical_order(reconstruct_string);
+ 
+  // vector<string> reconstruct_string_beg;
+  // reconstruct_string_beg.resize(string_length);
 
-  int i;
+  reconstruct_string.resize(string_length);
+  // on ajoute toute les lettre rotate à notre
+  int index = 0;
+  for (char my_char : my_rotated_string) {
+    //string tmp(1, my_char);
+    //reconstruct_string[index].insert(0, tmp);
+    reconstruct_string[index].push_back(my_char);
+
+    // string tmp(1, my_char);
+    // reconstruct_string_beg[index].insert(0, tmp);
+
+    index++;
+  }
+  cout << "finish" << endl;
+
+  // sorting_in_alphabetical_order(reconstruct_string_beg);
+  // sorting_in_alphabetical_order(reconstruct_string);
+  sorting_in_alphabetical_order_from_end_v2(reconstruct_string);
+  cout << "sort finish, taille string : "<< string_length << endl;
+
+  int i ;
   for (int x = 0; x < string_length - 1; x++) {
     i = 0;
     for (char my_char : my_rotated_string) {
-      string tmp(1, my_char);
-      reconstruct_string[i].insert(0, tmp);
+      // string tmp(1, my_char);
+      // reconstruct_string_beg[i].insert(0, tmp);
+
+      // string tmp(1, my_char);
+      // reconstruct_string[i].insert(0, tmp);
+      reconstruct_string[i].push_back(my_char);
       i += 1;
     }
-    sorting_in_alphabetical_order(reconstruct_string);
-    cout << "_____________" << endl;
-    for (auto element : reconstruct_string) {
-      cout << "[" << element << "]" << endl;
-    }
+
+    // sorting_in_alphabetical_order(reconstruct_string_beg);
+    sorting_in_alphabetical_order_from_end_v2(reconstruct_string);
+    // cout << "_____________" << endl;
+    // for (auto element : reconstruct_string) {
+    //   cout << "[" << element << "]" << endl;
+    // }
   }
 
+  std::cout << "temps écoulé : " <<  float(clock() - begin_time) / CLOCKS_PER_SEC;
+
+  string the_text_file = text_file_to_string("my_text.txt");
+  for (auto my_string : reconstruct_string){
+    if (the_text_file == my_string){
+      cout << endl<< "réussi : " << endl;
+    }
+  }
+  auto beginning = reconstruct_string.begin();
+  auto ending = reconstruct_string.end() -1;
+  string str_to_print;
+  cout << "taille : " << reconstruct_string.size() << endl;
+  // for (; ending != beginning; ending--) {
+  //   str_to_print += *ending;
+  // }
+  // cout << str_to_print << endl;
+  // cout << "variante : " << endl;
+  // for(string a_string : reconstruct_string){
+  //   cout <<  a_string<< endl;
+  // }
+
+
+  reverse(
+              reconstruct_string[index_of_original_string].begin(),
+              reconstruct_string[index_of_original_string].end());
   return reconstruct_string[index_of_original_string];
+  //return float(clock() - begin_time) / CLOCKS_PER_SEC;
 }
 
 // première étape :
@@ -690,7 +815,7 @@ string retrieve_text(vector<int8_t> &buffer, int text_begin,
   }
   return my_text_recompose;
 }
-void read_file(string file_name) {
+string retrieve_content_from_compressed_file(string file_name) {
   ifstream input(file_name, std::ios::binary);
   // on récupère le contenu du fichier compressé
   vector<int8_t> buffer(std::istreambuf_iterator<char>(input), {});
@@ -706,8 +831,7 @@ void read_file(string file_name) {
   // on récupère l'index du début de l'écriture du texte
   int text_begin = dico_len + 3; // les trois premiers bits dédié à des choses
 
-  string my_text_recompose = retrieve_text(buffer, text_begin, my_dict);
-  cout << "affichage : " << my_text_recompose << endl;
+  return retrieve_text(buffer, text_begin, my_dict);
 }
 
 //"my_text.txt"
@@ -715,11 +839,15 @@ void compression(string to_compress) {
   string the_text_file = text_file_to_string(to_compress);
 
   vector<string> my_strings;
-  all_possible_rotation_of_string(the_text_file, my_strings);
+  int index = all_possible_rotation_of_string(the_text_file, my_strings);
 
   string string_from_rotation =
       get_the_string_to_write_in_compressed_file(my_strings);
 
+  vector<string> reconstruct_string;
+  string is_init = recontruct_original_string(string_from_rotation, reconstruct_string, index);
+  cout << "is init ? : " << is_init << endl;
+  /*
   vector<pair<char, int>> occurences_of_each_char =
       string_to_vector_of_occurrences(string_from_rotation);
 
@@ -739,7 +867,8 @@ void compression(string to_compress) {
   write_compressed_file("my_compressed_text.bz2", the_text_file,
                         my_coding_list);
 
-  read_file("my_compressed_text.bz2");
+  //cout << "affichage : " << retrieve_content_from_compressed_file("my_compressed_text.bz2") << endl;
+  */
 }
 
 int main(void) {
