@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cstdint>
+#include <cstdlib>
 #include <deque>
 #include <fstream>
 #include <iostream>
@@ -1012,10 +1013,10 @@ int main(int argc, char *argv[]) {
     decompression(file_to_decompress, output_file);
     cout << "Decompression finished! The output file is : " << output_file
          << endl;
+  } else {
+    cout << "Error : bad usage of arguments... " << endl;
+    return EXIT_FAILURE;
   }
-  // cout << argv[0] << endl;
-  // cout << argv[1] << endl;
-  // compression("my_text.txt");
   return 0;
 }
 
