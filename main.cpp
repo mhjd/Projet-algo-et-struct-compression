@@ -6,6 +6,7 @@
 #include <iterator>
 #include <list>
 #include <map>
+#include <string.h>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -103,7 +104,6 @@ Node *node_from_nodes(Node *my_first_node, Node *my_second_node) {
                   my_first_node, my_second_node};
 }
 
-
 // insère le node en paramètre dans la liste de nodes tout en gardant l'ordre
 // croissant
 void insert_with_sorting(list<Node *> &my_nodes, Node *&my_new_node) {
@@ -121,7 +121,6 @@ void insert_with_sorting(list<Node *> &my_nodes, Node *&my_new_node) {
     my_nodes.push_back(my_new_node);
   }
 }
-
 
 void free_tree(Node *my_node) {
   if (my_node == NULL) {
@@ -204,19 +203,19 @@ bool vector_char_alphabetic_comparison(vector<char> x, vector<char> y) {
 
   //[](auto &x, auto &y) { vector_char_alphabetic_comparison(x, y); });
 
-    auto x_it = x.begin();
-    auto x_end = x.end();
+  auto x_it = x.begin();
+  auto x_end = x.end();
 
-    auto y_it = y.begin();
-    auto y_end = y.end();
-    for (; x_it != x_end; x_it++, y_it++) {
-      if (*x_it < *y_it) {
-        return true;
-      } else if (*x_it > *y_it) {
-        return false;
-      }
+  auto y_it = y.begin();
+  auto y_end = y.end();
+  for (; x_it != x_end; x_it++, y_it++) {
+    if (*x_it < *y_it) {
+      return true;
+    } else if (*x_it > *y_it) {
+      return false;
     }
-    return false;
+  }
+  return false;
 }
 
 // range le vecteur dans l'ordre alphabetique
@@ -237,12 +236,16 @@ void sorting_in_alphabetical_order_deque(deque<string> &my_list_of_strings) {
 //   auto a_end = a.end();
 //   auto b_end = b.end();
 
-
 // }
 
 bool compare(const std::string &first, const std::string &second) {
-  int i = first.length() -1;
+  int i = first.length() - 1;
 
+  // if (first[i]< second[i]){
+  //   return true;
+  // } else if (first[i] > second[i]){
+  //   return false;
+  // }
   // auto copy_first = first;
   // auto copy_second = second;
   // reverse(copy_first.begin(), copy_first.end());
@@ -268,31 +271,31 @@ bool compare(const std::string &first, const std::string &second) {
     }
 
     --i;
-   }
-   return false;
+  }
+  return false;
 }
 
 void sorting_in_alphabetical_order_from_end_v2(
-                                               
+
     vector<string> &my_list_of_strings) {
   // cout << "taille first : "
   //      << my_list_of_strings[0].size() << endl;
-  sort(my_list_of_strings.begin(), my_list_of_strings.end(),
-                  compare);
+  sort(my_list_of_strings.begin(), my_list_of_strings.end(), compare);
 }
 
-void sorting_in_alphabetical_order_from_end(vector<string> &my_list_of_strings) {
+void sorting_in_alphabetical_order_from_end(
+    vector<string> &my_list_of_strings) {
   sort(my_list_of_strings.begin(), my_list_of_strings.end(),
-       [](const auto &x,  const auto &y) {
+       [](const auto &x, const auto &y) {
          int i = 0;
          auto x_it = x.end() - 1;
          auto y_it = y.end() - 1;
-        
+
          while (*(x_it) == *(y_it)) {
            x_it--;
            y_it--;
          }
-         if (*(x_it) > *(y_it)){
+         if (*(x_it) > *(y_it)) {
            return true;
          } else {
            return false;
@@ -307,9 +310,10 @@ void sorting_in_alphabetical_order_from_end(vector<string> &my_list_of_strings) 
        });
 }
 
-// transforme notre string en un vecteur contenant tout les rotations possible, et retourne l'index de la string originale
+// transforme notre string en un vecteur contenant tout les rotations possible,
+// et retourne l'index de la string originale
 int all_possible_rotation_of_string(string my_string_to_rotate,
-                                     vector<string> &my_list_of_strings) {
+                                    vector<string> &my_list_of_strings) {
 
   my_list_of_strings.reserve(my_string_to_rotate.size());
 
@@ -346,32 +350,32 @@ string get_the_string_to_write_in_compressed_file(
   return the_return;
 }
 
-void sorting_char_vector_in_alphabetical_order(vector<deque<char>> &my_list_of_strings) {
+void sorting_char_vector_in_alphabetical_order(
+    vector<deque<char>> &my_list_of_strings) {
   sort(my_list_of_strings.begin(), my_list_of_strings.end(),
-       [](const auto &x, const auto &y) { 
-      auto x_it = x.begin();
-      auto x_end = x.end();
-      
-      auto y_it = y.begin();
-      auto y_end = y.end();
-      for (; x_it != x_end; x_it++, y_it++) {
-        if ((*x_it) > (*y_it)) {
-          return true;
-        }
-      }
-      return false;
+       [](const auto &x, const auto &y) {
+         auto x_it = x.begin();
+         auto x_end = x.end();
+
+         auto y_it = y.begin();
+         auto y_end = y.end();
+         for (; x_it != x_end; x_it++, y_it++) {
+           if ((*x_it) > (*y_it)) {
+             return true;
+           }
+         }
+         return false;
        });
 }
 
-// reconstruit la string originale 
+// reconstruit la string originale
 string recontruct_original_string(string &my_rotated_string,
-                                 vector<string> &reconstruct_string,
+                                  vector<string> &reconstruct_string,
                                   int index_of_original_string) {
   const clock_t begin_time = clock();
 
   int string_length = my_rotated_string.size();
 
- 
   // vector<string> reconstruct_string_beg;
   // reconstruct_string_beg.resize(string_length);
 
@@ -379,8 +383,8 @@ string recontruct_original_string(string &my_rotated_string,
   // on ajoute toute les lettre rotate à notre
   int index = 0;
   for (char my_char : my_rotated_string) {
-    //string tmp(1, my_char);
-    //reconstruct_string[index].insert(0, tmp);
+    // string tmp(1, my_char);
+    // reconstruct_string[index].insert(0, tmp);
     reconstruct_string[index].push_back(my_char);
 
     // string tmp(1, my_char);
@@ -393,9 +397,9 @@ string recontruct_original_string(string &my_rotated_string,
   // sorting_in_alphabetical_order(reconstruct_string_beg);
   // sorting_in_alphabetical_order(reconstruct_string);
   sorting_in_alphabetical_order_from_end_v2(reconstruct_string);
-  cout << "sort finish, taille string : "<< string_length << endl;
+  cout << "sort finish, taille string : " << string_length << endl;
 
-  int i ;
+  int i;
   for (int x = 0; x < string_length - 1; x++) {
     i = 0;
     for (char my_char : my_rotated_string) {
@@ -416,16 +420,17 @@ string recontruct_original_string(string &my_rotated_string,
     // }
   }
 
-  std::cout << "temps écoulé : " <<  float(clock() - begin_time) / CLOCKS_PER_SEC;
+  std::cout << "temps écoulé : "
+            << float(clock() - begin_time) / CLOCKS_PER_SEC;
 
   string the_text_file = text_file_to_string("my_text.txt");
-  for (auto my_string : reconstruct_string){
-    if (the_text_file == my_string){
-      cout << endl<< "réussi : " << endl;
+  for (auto my_string : reconstruct_string) {
+    if (the_text_file == my_string) {
+      cout << endl << "réussi : " << endl;
     }
   }
   auto beginning = reconstruct_string.begin();
-  auto ending = reconstruct_string.end() -1;
+  auto ending = reconstruct_string.end() - 1;
   string str_to_print;
   cout << "taille : " << reconstruct_string.size() << endl;
   // for (; ending != beginning; ending--) {
@@ -437,12 +442,10 @@ string recontruct_original_string(string &my_rotated_string,
   //   cout <<  a_string<< endl;
   // }
 
-
-  reverse(
-              reconstruct_string[index_of_original_string].begin(),
-              reconstruct_string[index_of_original_string].end());
+  reverse(reconstruct_string[index_of_original_string].begin(),
+          reconstruct_string[index_of_original_string].end());
   return reconstruct_string[index_of_original_string];
-  //return float(clock() - begin_time) / CLOCKS_PER_SEC;
+  // return float(clock() - begin_time) / CLOCKS_PER_SEC;
 }
 
 // première étape :
@@ -742,15 +745,18 @@ void add_a_codage_to_dict(map<deque<bool>, char> &my_dict_to_fill, char my_char,
 // transforme un dictionnaire en binaire, en un vrai dictionnaire
 void dict_in_binary_to_real_dict(vector<int8_t> &my_dict_in_binary,
                                  map<deque<bool>, char> &my_dict) {
-  int lap_remaining_before_coding_size = 1; // tour restant avant la taille du codage
+  int lap_remaining_before_coding_size =
+      1; // tour restant avant la taille du codage
   char actual_char;
   int size_of_codage;
   list<int8_t> codage_of_char;
   // pour chaque bit de mon dico en binaire
   for (int8_t element : my_dict_in_binary) {
-    if (lap_remaining_before_coding_size == 1) { // le bit est au char, on enregistre le char
+    if (lap_remaining_before_coding_size ==
+        1) { // le bit est au char, on enregistre le char
       actual_char = (char)element;
-    } else if (lap_remaining_before_coding_size == 0) {            // on est à la taille du codage d'un char
+    } else if (lap_remaining_before_coding_size ==
+               0) {            // on est à la taille du codage d'un char
       if ((int)element <= 8) { // si la taille du codage est inférieur à 1 byte
         // il reste 3 bits avant le prochain codage:
         lap_remaining_before_coding_size = 1 + 1 + 1;
@@ -764,7 +770,8 @@ void dict_in_binary_to_real_dict(vector<int8_t> &my_dict_in_binary,
 
     } else { // si on est au codage en lui même
       codage_of_char.push_back(element);
-      if (lap_remaining_before_coding_size == 2) { // si on a ajouter le dernier élément de codage_of_char
+      if (lap_remaining_before_coding_size ==
+          2) { // si on a ajouter le dernier élément de codage_of_char
         add_a_codage_to_dict(my_dict, actual_char, size_of_codage,
                              codage_of_char);
       }
@@ -773,11 +780,11 @@ void dict_in_binary_to_real_dict(vector<int8_t> &my_dict_in_binary,
   }
 }
 
-map<deque<bool>, char> retrieve_dict(vector<int8_t> &my_dict_in_binary, vector<int8_t> &buffer, int dico_len) {
+map<deque<bool>, char> retrieve_dict(vector<int8_t> &my_dict_in_binary,
+                                     vector<int8_t> &buffer, int dico_len) {
   my_dict_in_binary.reserve(dico_len);
-  for (int i = 3; i < dico_len + 3;
-       i++) { // + 3 car on compte par les premiers bits, dédié à des autres
-              // choses
+  for (int i = 3; i < dico_len + 3; i++) { // + 3 car on compte par les premiers
+                                           // bits, dédié à des autres choses
     my_dict_in_binary.push_back(buffer[i]);
   }
 
@@ -789,7 +796,7 @@ map<deque<bool>, char> retrieve_dict(vector<int8_t> &my_dict_in_binary, vector<i
 }
 
 string retrieve_text(vector<int8_t> &buffer, int text_begin,
-                            map<deque<bool>, char> my_dict) {
+                     map<deque<bool>, char> my_dict) {
 
   // on récupère le texte sous forme binaire en liste de bits
   list<int> list_of_bits_of_text;
@@ -823,10 +830,10 @@ string retrieve_content_from_compressed_file(string file_name) {
   // la taille du dico, comme ça on sait où il se commence et fini
   int dico_len = buffer[1] * 128 + buffer[2];
 
-  // on récupère notre dictionnaire 
+  // on récupère notre dictionnaire
   vector<int8_t> my_dict_in_binary;
-  map<deque<bool>, char> my_dict = retrieve_dict(my_dict_in_binary, buffer,
-                                              dico_len);
+  map<deque<bool>, char> my_dict =
+      retrieve_dict(my_dict_in_binary, buffer, dico_len);
 
   // on récupère l'index du début de l'écriture du texte
   int text_begin = dico_len + 3; // les trois premiers bits dédié à des choses
@@ -834,22 +841,28 @@ string retrieve_content_from_compressed_file(string file_name) {
   return retrieve_text(buffer, text_begin, my_dict);
 }
 
+void decompression(string file_to_decompress, string output_file) {
+  std::ofstream out(output_file);
+  out << retrieve_content_from_compressed_file(file_to_decompress);
+  out.close();
+}
+
 //"my_text.txt"
-void compression(string to_compress) {
+void compression(string to_compress, string output_file) {
   string the_text_file = text_file_to_string(to_compress);
 
-  vector<string> my_strings;
+  /*vector<string> my_strings;
   int index = all_possible_rotation_of_string(the_text_file, my_strings);
 
   string string_from_rotation =
       get_the_string_to_write_in_compressed_file(my_strings);
 
   vector<string> reconstruct_string;
-  string is_init = recontruct_original_string(string_from_rotation, reconstruct_string, index);
-  cout << "is init ? : " << is_init << endl;
-  /*
+  string is_init = recontruct_original_string(string_from_rotation,
+  reconstruct_string, index); cout << "is init ? : " << is_init << endl;*/
+
   vector<pair<char, int>> occurences_of_each_char =
-      string_to_vector_of_occurrences(string_from_rotation);
+      string_to_vector_of_occurrences(the_text_file);
 
   // On transforme notre vecteur d'occurence en arbre
   Node *my_tree = vector_of_occurences_to_tree(occurences_of_each_char);
@@ -864,17 +877,148 @@ void compression(string to_compress) {
   free_tree(my_tree);
 
   // ecrire le fichier
-  write_compressed_file("my_compressed_text.bz2", the_text_file,
-                        my_coding_list);
+  write_compressed_file(output_file, the_text_file, my_coding_list);
 
-  //cout << "affichage : " << retrieve_content_from_compressed_file("my_compressed_text.bz2") << endl;
-  */
+  // cout << "affichage : " <<
+  // retrieve_content_from_compressed_file("my_compressed_text.bz2") << endl;
+  cout << "Compression completed!" << endl;
 }
 
-int main(void) {
-  compression("my_text.txt");
+void say_help_message() {
+  cout << "Compression program. Usage : " << endl
+       << "./a.out [-option] [input] [output (optional)]" << endl
+       << endl;
+  cout << "   Options : " << endl
+       << "   -c : compress" << endl
+       << "   -d : decompress" << endl
+       << "   -h or --help : help (no input neither output)" << endl;
+}
+
+bool is_file_exist(string filename) {
+  ifstream f(filename.c_str());
+  // https://stackoverflow.com/questions/12774207/fastest-way-to-check-if-a-file-exists-using-standard-c-c11-14-17-c
+  return f.good();
+}
+bool is_correct_extension_file(string file_name_to_verify, string extension) {
+  return (file_name_to_verify.size() < 5 ||
+          file_name_to_verify.substr(file_name_to_verify.size() - 4) !=
+              ("." + extension));
+}
+
+int is_correct_file(string file_to_compress, string extension) {
+
+  if (!is_file_exist(file_to_compress)) { // on vérifie si le fichier existe
+    cout << "Error : This file doesn't exist..." << endl;
+    return -1;
+  }
+  if (is_correct_extension_file(
+          file_to_compress,
+          extension)) { // on vérifie si c'est un fichier texte
+    cout << "Error : It's not a .txt file..." << endl;
+    return -1;
+  }
   return 0;
 }
+
+bool is_output_file_can_be_written(string output_file) {
+  string response;
+  if (is_file_exist(output_file)) {
+    cout << "The file " << output_file
+         << " already exists, do you want overwrite it ? y/n : ";
+    while (response != "y" && response != "n") {
+      cin >> response;
+      if (response != "y" && response != "n") {
+        cout << "Please write y or n : " << endl;
+      }
+    }
+  } else {
+    return true;
+  }
+  if (response == "y") {
+    return true;
+  }
+  return false; // -> "n"
+}
+
+int main(int argc, char *argv[]) {
+  if (argc == 1) { // si aucun argument
+    say_help_message();
+  } else if (argc == 2 && (!strcmp(argv[1], "-h") ||
+                           !strcmp(argv[1], "--help"))) { // si aide
+    say_help_message();
+  } else if ((argc == 4 || argc == 3) &&
+             !strcmp(argv[1], "-c")) { // si compression
+
+    // on vérifie si le fichier existe, et qu'il est un .txt
+    string file_to_compress(argv[2]);
+    if (is_correct_file(file_to_compress, "txt") == -1) {
+      return EXIT_FAILURE;
+    }
+
+    // on vérifie si le fichier output existe déjà, si oui on vérifie si l'utilisateur veut overwrite
+    string output_file;
+    if (argc == 4) {
+      output_file += argv[3]; // si un nom de fichier output est précisé
+    } else {
+      output_file += argv[2]; // sinon il prend celui du fichier à compresser
+      // on enlève l'extension .txt
+      for (int i = 0; i < 4; i++) {
+        output_file.pop_back();
+      }
+    }
+    output_file += ".bz2"; // on ajoute l'extension
+
+    if (!is_output_file_can_be_written(
+            output_file)) { // si il existe déjà, et qu'on veut pas écrire par
+                            // dessus
+      return 0;
+    }
+
+    // compression
+    cout << "Compression in progress..." << endl;
+    compression(file_to_compress, output_file);
+    cout << "Compression finished! The output file is : " << output_file
+         << endl;
+  } else if ((argc == 4 || argc == 3) && !strcmp(argv[1], "-d")) {
+
+    // on vérifie si le fichier à décompresser est correct (existe, et .bz2)
+    string file_to_decompress(argv[2]);
+    if (is_correct_file(file_to_decompress, "bz2") == -1) {
+      return EXIT_FAILURE;
+    }
+
+    // on créer ajoute nom de l'output file, s'il n'est pas précisé, c'est le même que le fichier à décompresser
+    string output_file;
+    if (argc == 4) {
+      output_file += argv[3];
+    } else {
+      output_file += argv[2];
+      // on enlève l'extension .bz2
+      for (int i = 0; i < 4; i ++){
+        output_file.pop_back();
+      }
+    }
+    output_file += ".txt";
+
+    if (!is_output_file_can_be_written(
+            output_file)) {
+      // si il existe déjà, et qu'on veut pas écrire par
+                            // dessus, on arrête le programme
+      return 0;
+    }
+
+    // décompression
+    cout << "Decompression in progress..." << endl;
+    decompression(file_to_decompress, output_file);
+    cout << "Decompression finished! The output file is : " << output_file
+         << endl;
+  }
+  // cout << argv[0] << endl;
+  // cout << argv[1] << endl;
+  // compression("my_text.txt");
+  return 0;
+}
+
 // {
 
 //   //  vector<string> my_strings;
