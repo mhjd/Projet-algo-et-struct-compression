@@ -1,0 +1,20 @@
+#+TITLE: Projet Bzip2
+#+AUTHOR: JAVAID Mohammad-Habib L2X
+#+DATE: 25/05/2022 
+
+* Présentation du projet 
+
+L'objectif du projet que j'ai choisi était de faire un programme de compression qui utilise Burrows-Wheeler et Huffman.
+
+* Comment utiliser le programme ?
+** Compilation
+Pour commencer, il faut faire la commande ~make~, l'exécutable est le fichier ~./compresseur~.
+** Aide
+Pour avoir toutes les indications, il suffit d'écrire ~./compresseur~, ~./compresseur -h~ ou ~./compresseur --help~.
+** Compression - Décompression
+Pour compresser un programme, l'on fait : ~./compresseur -c votre_fichier.txt votre_output~. \\
+Pour décompresser un programme, l'on fait : ~./compresseur -d votre_fichier.bz2 votre_output~.\\
+Dans les deux cas, définir un nom d'output particulier est optionnel.
+
+* Structure 
+Mon code se divise

@@ -816,8 +816,6 @@ void compression(string to_compress, string output_file) {
   // ecrire le fichier
   write_compressed_file(output_file, the_text_file, my_coding_list);
 
-  // cout << "affichage : " <<
-  // retrieve_content_from_compressed_file("my_compressed_text.bz2") << endl;
   cout << "Compression completed!" << endl;
 }
 
