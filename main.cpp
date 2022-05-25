@@ -195,7 +195,6 @@ void tree_to_dict_of_binary_codage(map<deque<bool>, char> &coding_list,
 // utile pour la transformée de Burrows-Wheeler
 bool vector_char_alphabetic_comparison(vector<char> x, vector<char> y) {
 
-
   auto x_it = x.begin();
   auto x_end = x.end();
 
@@ -222,7 +221,6 @@ void sorting_in_alphabetical_order_deque(deque<string> &my_list_of_strings) {
        [](const auto &x, const auto &y) { return x < y; });
 }
 
-
 bool compare(const std::string &first, const std::string &second) {
   int i = first.length() - 1;
   string save_first;
@@ -241,7 +239,8 @@ bool compare(const std::string &first, const std::string &second) {
   return false;
 }
 
-void sorting_in_alphabetical_order_from_end_v2(vector<string> &my_list_of_strings) {
+void sorting_in_alphabetical_order_from_end_v2(
+    vector<string> &my_list_of_strings) {
   sort(my_list_of_strings.begin(), my_list_of_strings.end(), compare);
 }
 
@@ -402,7 +401,6 @@ string recontruct_original_string(string &my_rotated_string,
   return reconstruct_string[index_of_original_string];
   // return float(clock() - begin_time) / CLOCKS_PER_SEC;
 }
-
 
 // prend un char, regarde son équivalent en binaire, l'ajoute à la liste de bits
 void add_char_in_list_of_bits(char my_char_to_add,
@@ -901,7 +899,8 @@ int main(int argc, char *argv[]) {
       return EXIT_FAILURE;
     }
 
-    // on vérifie si le fichier output existe déjà, si oui on vérifie si l'utilisateur veut overwrite
+    // on vérifie si le fichier output existe déjà, si oui on vérifie si
+    // l'utilisateur veut overwrite
     string output_file;
     if (argc == 4) {
       output_file += argv[3]; // si un nom de fichier output est précisé
@@ -933,23 +932,23 @@ int main(int argc, char *argv[]) {
       return EXIT_FAILURE;
     }
 
-    // on créer ajoute nom de l'output file, s'il n'est pas précisé, c'est le même que le fichier à décompresser
+    // on créer ajoute nom de l'output file, s'il n'est pas précisé, c'est le
+    // même que le fichier à décompresser
     string output_file;
     if (argc == 4) {
       output_file += argv[3];
     } else {
       output_file += argv[2];
       // on enlève l'extension .bz2
-      for (int i = 0; i < 4; i ++){
+      for (int i = 0; i < 4; i++) {
         output_file.pop_back();
       }
     }
     output_file += ".txt";
 
-    if (!is_output_file_can_be_written(
-            output_file)) {
+    if (!is_output_file_can_be_written(output_file)) {
       // si il existe déjà, et qu'on veut pas écrire par
-                            // dessus, on arrête le programme
+      // dessus, on arrête le programme
       return 0;
     }
 
@@ -964,4 +963,3 @@ int main(int argc, char *argv[]) {
   }
   return 0;
 }
-
