@@ -191,6 +191,8 @@ void tree_to_dict_of_binary_codage(map<deque<bool>, char> &coding_list,
                                   my_tree->node_right);
   }
 }
+
+namespace burrows_wheeler {
 // utile pour la transformée de Burrows-Wheeler
 bool vector_char_alphabetic_comparison(vector<char> x, vector<char> y) {
 
@@ -333,9 +335,9 @@ string recontruct_original_string(string &my_rotated_string,
   // on ajoute toute les lettre rotate à notre
   int index = 0;
   for (char my_char : my_rotated_string) {
-    // string tmp(1, my_char);
-    // reconstruct_string[index].insert(0, tmp);
-    reconstruct_string[index].push_back(my_char);
+    string tmp(1, my_char);
+    reconstruct_string[index].insert(0, tmp);
+    //reconstruct_string[index].push_back(my_char);
 
     // string tmp(1, my_char);
     // reconstruct_string_beg[index].insert(0, tmp);
@@ -345,8 +347,8 @@ string recontruct_original_string(string &my_rotated_string,
   cout << "finish" << endl;
 
   // sorting_in_alphabetical_order(reconstruct_string_beg);
-  // sorting_in_alphabetical_order(reconstruct_string);
-  sorting_in_alphabetical_order_from_end_v2(reconstruct_string);
+  sorting_in_alphabetical_order(reconstruct_string);
+  //sorting_in_alphabetical_order_from_end_v2(reconstruct_string);
   cout << "sort finish, taille string : " << string_length << endl;
 
   int i;
@@ -356,14 +358,14 @@ string recontruct_original_string(string &my_rotated_string,
       // string tmp(1, my_char);
       // reconstruct_string_beg[i].insert(0, tmp);
 
-      // string tmp(1, my_char);
-      // reconstruct_string[i].insert(0, tmp);
+       string tmp(1, my_char);
+       reconstruct_string[i].insert(0, tmp);
       reconstruct_string[i].push_back(my_char);
       i += 1;
     }
 
-    // sorting_in_alphabetical_order(reconstruct_string_beg);
-    sorting_in_alphabetical_order_from_end_v2(reconstruct_string);
+    sorting_in_alphabetical_order(reconstruct_string);
+    //sorting_in_alphabetical_order_from_end_v2(reconstruct_string);
     // cout << "_____________" << endl;
     // for (auto element : reconstruct_string) {
     //   cout << "[" << element << "]" << endl;
@@ -381,21 +383,13 @@ string recontruct_original_string(string &my_rotated_string,
   }
   string str_to_print;
   cout << "taille : " << reconstruct_string.size() << endl;
-  // for (; ending != beginning; ending--) {
-  //   str_to_print += *ending;
-  // }
-  // cout << str_to_print << endl;
-  // cout << "variante : " << endl;
-  // for(string a_string : reconstruct_string){
-  //   cout <<  a_string<< endl;
-  // }
 
   reverse(reconstruct_string[index_of_original_string].begin(),
           reconstruct_string[index_of_original_string].end());
   return reconstruct_string[index_of_original_string];
-  // return float(clock() - begin_time) / CLOCKS_PER_SEC;
 }
 
+} 
 // prend un char, regarde son équivalent en binaire, l'ajoute à la liste de bits
 void add_char_in_list_of_bits(char my_char_to_add,
                               map<deque<bool>, char> &my_coding_list,
@@ -538,7 +532,8 @@ void add_info_bits_in_array(int8_t *array, int bit_added_in_text,
                             int my_dict_in_binary_size) {
 
   array[0] = bit_added_in_text; // le nombre de bit ajouter à la fin du texte
-  // on enregistre la taille sur deux bit: 128 * array[1] + array[2]
+  // on enregistre la taille du dictionnaire sur deux bit: 128 * array[1] + array[2]
+  // 128 car c'est la taille maximale d'un int8_t
   if (my_dict_in_binary_size < 128) {
     array[1] = 0;
     array[2] = my_dict_in_binary_size;
