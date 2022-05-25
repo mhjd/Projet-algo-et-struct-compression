@@ -66,7 +66,6 @@ string text_file_to_string(string file_name) {
 vector<pair<char, int>> string_to_vector_of_occurrences(string &my_string) {
 
   map<char, int> my_chars_occurences;
-  char c;
 
   // pour chaque caractère de notre string
   for (auto c : my_string) {
@@ -199,7 +198,6 @@ bool vector_char_alphabetic_comparison(vector<char> x, vector<char> y) {
   auto x_end = x.end();
 
   auto y_it = y.begin();
-  auto y_end = y.end();
   for (; x_it != x_end; x_it++, y_it++) {
     if (*x_it < *y_it) {
       return true;
@@ -248,7 +246,6 @@ void sorting_in_alphabetical_order_from_end(
     vector<string> &my_list_of_strings) {
   sort(my_list_of_strings.begin(), my_list_of_strings.end(),
        [](const auto &x, const auto &y) {
-         int i = 0;
          auto x_it = x.end() - 1;
          auto y_it = y.end() - 1;
 
@@ -312,7 +309,6 @@ void sorting_char_vector_in_alphabetical_order(
          auto x_end = x.end();
 
          auto y_it = y.begin();
-         auto y_end = y.end();
          for (; x_it != x_end; x_it++, y_it++) {
            if ((*x_it) > (*y_it)) {
              return true;
@@ -383,8 +379,6 @@ string recontruct_original_string(string &my_rotated_string,
       cout << endl << "réussi : " << endl;
     }
   }
-  auto beginning = reconstruct_string.begin();
-  auto ending = reconstruct_string.end() - 1;
   string str_to_print;
   cout << "taille : " << reconstruct_string.size() << endl;
   // for (; ending != beginning; ending--) {
@@ -450,7 +444,7 @@ int8_t create_chunk_bit(list<int> &my_list_of_bits) {
 void write_list_of_bits_of_text_in_array(list<int> &my_list_of_bits,
                                          int8_t *my_tab, int the_beginning) {
   auto number_of_bytes = (my_list_of_bits.size() / 8);
-  for (int i = the_beginning; (i - the_beginning) < number_of_bytes; i++) {
+  for (int i = the_beginning; (i - the_beginning) < (int)number_of_bytes; i++) {
     my_tab[i] = create_chunk_bit(my_list_of_bits);
   }
 }
@@ -460,7 +454,7 @@ void write_list_of_bits_of_text_in_array(list<int> &my_list_of_bits,
 void write_dict_in_array(vector<int8_t> &my_dict, int8_t *my_array) {
   auto number_of_bytes = my_dict.size(); // +1?
   // 3 car les 3 premiers octets sont dédié à autre chose
-  for (int i = 3; (i - 3) < number_of_bytes; i++) {
+  for (int i = 3; (i - 3) < (int) number_of_bytes; i++) {
     my_array[i] = my_dict[i - 3]; // i-3 car on commence à l'indice 0
   }
 }
@@ -516,7 +510,7 @@ vector<int8_t> dict_in_binary_form(map<deque<bool>, char> &my_coding_list) {
     // maintenant qu'on a notre liste de bit, il faut la mettre en format
     // int8_t, et l'ajouter à notre dictionnaire binaire
     auto number_of_bytes = my_list_of_bits.size() / 8;
-    for (int i = 0; i < number_of_bytes; i++) {
+    for (int i = 0; i < (int) number_of_bytes; i++) {
       my_dictionnary_in_binary.push_back(create_chunk_bit(my_list_of_bits));
     }
   }
@@ -626,7 +620,6 @@ void chunk_to_list_bit(list<int> &list_of_bits, int8_t chunk_of_bits) {
 // cherche le char dans le dictionnaire
 char find_char(map<deque<bool>, char> &my_coding_list,
                list<int> &list_of_bits_of_text) {
-  bool added = false;
   deque<bool>
       list_of_bit_of_coding; // on lui met des bit de notre list de bit jusqu'à
                              // avoir trouvé un codage de caractère
@@ -745,7 +738,7 @@ string retrieve_text(vector<int8_t> &buffer, int text_begin,
 
   // on récupère le texte sous forme binaire en liste de bits
   list<int> list_of_bits_of_text;
-  for (int i = text_begin; i < buffer.size(); i++) {
+  for (int i = text_begin; i < (int) buffer.size(); i++) {
     chunk_to_list_bit(list_of_bits_of_text, buffer[i]);
   }
 
