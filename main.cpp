@@ -434,7 +434,7 @@ void add_char_in_list_of_bits(char my_char_to_add,
 // prend une liste d'int de 0 et des 1, lui retire 8 élément pour en faire un
 // octet, et renvoie cet octet
 int8_t create_chunk_bit(list<int> &my_list_of_bits) {
-  int8_t my_byte;
+  int8_t my_byte = '\0';
   for (int i = 0; i < 8; i++) {
     // 8 - 1 - i, pour que ça prenne le bit le plus à gauche
     // c'est pas très utile en vrai, mais ça m'aide à me représenter
