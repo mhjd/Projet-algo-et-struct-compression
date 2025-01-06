@@ -22,6 +22,9 @@ Dans les deux cas, définir un nom d'output particulier est optionnel.
 Le code est composé d'un ensemble de fonction pour compresser, pour décompresser, et du main où l'on gère la gestion des commandes du terminal. Je ne détaillerais pas le main car c'est assez bien commenté dans le ~main.cpp~, je me contenterais d'expliquer les fonctions principales permettant de comprendre mon code.
 ** Compression
 Voici la fonction ~compression~ qui réalise tout le processus de compression du fichier entré par l'utilisateur : 
+#+begin_export latex
+  \clearpage
+#+end_export
 
 #+BEGIN_SRC cpp
   void compression(string to_compress, string output_file) {
@@ -56,7 +59,7 @@ Il y a 5 grandes étapes pour compresser :
 
 *** La fonction ~write_compressed_file~
 
-J'aimerais m'attarder un peu sur cette fonction car c'est sur celle-ci que je pense avoir passer le plus de temps.\\
+J'aimerais m'attarder un peu sur cette fonction car c'est sur celle-ci que je pense avoir passé le plus de temps.\\
 
 En effet, c'était un véritable défi pour moi d'écrire la compression dans un fichier et ce, pour deux raisons : 
 - il faut que le texte compressé soi séparer du dictionnaire, et qu'on puisse identifier quelle partie correspond à quoi lors de la décompression 
@@ -107,6 +110,10 @@ void write_array(int8_t *array, int bit_added,
 #+END_SRC
 
 On voit très clairement que notre fichier compressé est découpé en 3 parties :
+#+begin_export latex
+  \clearpage
+#+end_export
+
 - les bits (3 octets) d'informations au début de fichier, permettant de délimiter la partie dictionnaire et la partie texte compressé 
   - le premier octet représente le nombre d'octet ajouter dans le texte compressé, à retirer lors de la décompression
   - les deux autres octets permettent de délimiter la taille du dictionnaire, c'est détaillé dans la fonction ~add_info_bits_in_array~.

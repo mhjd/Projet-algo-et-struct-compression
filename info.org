@@ -21,3 +21,9 @@ Maintenant faut récupérer le dico dans le array sous forme de vector<int8_t>, 
 
 
 bon maintenant tout fonctionne, sauf quand à partir d'un codage de 10 bit, ça part en vrille
+
+
+
+
+-- WALL WEXTRA 
+
